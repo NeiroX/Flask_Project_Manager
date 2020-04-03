@@ -50,7 +50,7 @@ class Comment(SqlAlchemyBase):
     __tablename__ = 'comments'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     text = sqlalchemy.Column(sqlalchemy.Text, nullable=True)
-    creator_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('user.id'))
+    creator_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
     create_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now())
     likes = sqlalchemy.Column(sqlalchemy.Integer, default=0)
 
