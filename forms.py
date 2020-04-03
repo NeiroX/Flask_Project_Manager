@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import SelectField, StringField, PasswordField, IntegerField, SubmitField, FileField, \
-    BooleanField
+    BooleanField, TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo
 
 
@@ -27,9 +27,9 @@ class LoginForm(FlaskForm):
 
 
 class RegisterProjectForm(FlaskForm):
-    name = StringField('Project name', validators=[DataRequired()])
-    short_description = StringField('Short description', validators=[DataRequired()])
-    full_description = StringField('Full description')
+    name = StringField('* Project name', validators=[DataRequired()])
+    short_description = TextAreaField('* Short description', validators=[DataRequired()])
+    full_description = TextAreaField('Full description')
     collaborators = StringField(
         'Collaborators')
     submit = SubmitField('Login')

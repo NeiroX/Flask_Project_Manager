@@ -12,7 +12,6 @@ blueprint = Blueprint('blog', __name__,
 def register_project():
     form = RegisterProjectForm()
     if request.method == 'POST' and form.validate_on_submit():
-        return render_template('register_project.html', form=form, title='Register project')
         project = Projects(name=form.name.data,
                            short_description=form.short_description.data,
                            full_description=form.full_description.data,
@@ -21,5 +20,5 @@ def register_project():
         sesion.add(project)
         sesion.commit()
         sesion.close()
-        return redirect('base')
+        return redirect(url_for('base'))
     return render_template('register_project.html', form=form, title='Register project')

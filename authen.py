@@ -15,7 +15,7 @@ def check_user(form):
         (User.email == form.username_email.data) | (
                 User.username == form.username_email.data)).first()
     if not user:
-        return ('username', 'User does not exist')
+        return ('username_email', 'User does not exist')
     if not user.check_password(form.password.data):
         return ('password', 'Wrong password')
     return 'OK'
@@ -61,7 +61,7 @@ def register():
         sesion.add(user)
         sesion.commit()
         sesion.close()
-        return redirect('base')
+        return redirect(url_for('base'))
     return render_template('register.html', form=form, title='Register')
 
 

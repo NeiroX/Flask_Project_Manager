@@ -17,7 +17,7 @@ class User(SqlAlchemyBase, UserMixin):
     country = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     age = sqlalchemy.Column(sqlalchemy.Integer)
     register_date = sqlalchemy.Column(sqlalchemy.DateTime)
-    projects = sqlalchemy.Column(sqlalchemy.String)
+    prjcts = sqlalchemy.Column(sqlalchemy.String)
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
