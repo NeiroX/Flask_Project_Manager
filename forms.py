@@ -13,7 +13,7 @@ class RegisterForm(FlaskForm):
     password_again = PasswordField('Password again',
                                    validators=[DataRequired(), EqualTo('password',
                                                                        message='Passwords do not match')])
-    country = SelectField('Country',  coerce=str, validators=[DataRequired()])
+    country = SelectField('Country', coerce=str, validators=[DataRequired()])
     age = IntegerField('Age', validators=[DataRequired()])
     remember_me = BooleanField('Remember me', default=False)
     submit = SubmitField('Register')
@@ -26,6 +26,10 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 
-class NewProject(FlaskForm):
-    img = FileField('Welcome image')
-    Name = StringField('Name')
+class RegisterProjectForm(FlaskForm):
+    name = StringField('Project name', validators=[DataRequired()])
+    short_description = StringField('Short description', validators=[DataRequired()])
+    full_description = StringField('Full description')
+    collaborators = StringField(
+        'Collaborators(add usernames using @; example: @username1, username2)')
+    submit = SubmitField('Login')

@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename
 import os
 import authen
 import errors
+import blog
 import db_session
 
 app = Flask(__name__)
@@ -45,4 +46,5 @@ if __name__ == '__main__':
     db_session.global_init("db.sqlite")
     app.register_blueprint(authen.blueprint)
     app.register_blueprint(errors.blueprint)
+    app.register_blueprint(blog.blueprint)
     app.run()

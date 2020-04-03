@@ -25,6 +25,7 @@
   </div>
   {% if current_user.is_authenticated %}
         <div class="btn-group">
+            <a class="btn btn-outline-primary" href="/register-project">New project</a>
             <a class="btn btn-outline-secondary" href="/register">{{current_user.username}}</a>
             <a class="btn btn-outline-danger" href="/logout">Logout</a>
         </div>
