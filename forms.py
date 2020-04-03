@@ -31,5 +31,5 @@ class RegisterProjectForm(FlaskForm):
     short_description = StringField('Short description', validators=[DataRequired()])
     full_description = StringField('Full description')
     collaborators = StringField(
-        'Collaborators(add usernames using @; example: @username1, username2)')
+        'Collaborators')
     submit = SubmitField('Login')
