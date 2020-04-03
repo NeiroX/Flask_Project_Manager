@@ -39,8 +39,8 @@ def check_new_user(form: RegisterForm):
 @blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
-    countries_list = [(country[0], country[1]) for country in
-                      enumerate([line.strip() for line in open('Data/countries.txt').readlines()])]
+    countries_list = [(country, country) for country in
+                      [line.strip() for line in open('Data/countries.txt').readlines()]]
     form.country.choices = countries_list
     if request.method == 'POST' and form.validate_on_submit():
         ans = check_new_user(form)

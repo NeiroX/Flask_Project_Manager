@@ -13,7 +13,7 @@ class RegisterForm(FlaskForm):
     password_again = PasswordField('Password again',
                                    validators=[DataRequired(), EqualTo('password',
                                                                        message='Passwords do not match')])
-    country = SelectField('Country', validators=[DataRequired()])
+    country = SelectField('Country',  coerce=str, validators=[DataRequired()])
     age = IntegerField('Age', validators=[DataRequired()])
     remember_me = BooleanField('Remember me', default=False)
     submit = SubmitField('Register')
