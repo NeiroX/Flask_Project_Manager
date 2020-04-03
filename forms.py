@@ -32,4 +32,4 @@ class RegisterProjectForm(FlaskForm):
     full_description = TextAreaField('Full description')
     collaborators = StringField(
         'Collaborators')
-    submit = SubmitField('Login')
+    submit = SubmitField('Create project')

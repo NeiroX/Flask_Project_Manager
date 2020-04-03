@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, make_response, url_for
 from forms import RegisterProjectForm
-from models import Projects
+from models import Projects, User
 import db_session
 import datetime
 
@@ -14,9 +14,12 @@ def register_project():
     if request.method == 'POST' and form.validate_on_submit():
         project = Projects(name=form.name.data,
                            short_description=form.short_description.data,
-                           full_description=form.full_description.data,
-                           collaborators=form.collaborators.data)
+                           full_description=form.full_description.data)
         sesion = db_session.create_session()
+        for username in form.collaborators.data.split(', '):
+            user = sesion.query(User).filter(User.username == username.strip()[1:]).first()
+            if user:
+                project.collaborators.append(user)
         sesion.add(project)
         sesion.commit()
         sesion.close()
