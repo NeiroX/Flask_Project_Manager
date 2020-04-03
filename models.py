@@ -17,6 +17,7 @@ class User(SqlAlchemyBase, UserMixin):
     country = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     age = sqlalchemy.Column(sqlalchemy.Integer)
     register_date = sqlalchemy.Column(sqlalchemy.DateTime)
+    projects = sqlalchemy.Column(sqlalchemy.String)
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
@@ -33,11 +34,35 @@ class Projects(SqlAlchemyBase):
     full_description = sqlalchemy.Column(sqlalchemy.Text, nullable=True)
     create_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now())
     edit_date = sqlalchemy.Column(sqlalchemy.DateTime)
-    rates_5 = sqlalchemy.Column(sqlalchemy.Integer)
-    rates_4 = sqlalchemy.Column(sqlalchemy.Integer)
-    rates_3 = sqlalchemy.Column(sqlalchemy.Integer)
-    rates_2 = sqlalchemy.Column(sqlalchemy.Integer)
-    rates_1 = sqlalchemy.Column(sqlalchemy.Integer)
-    views = sqlalchemy.Column(sqlalchemy.Integer)
+    rates_5 = sqlalchemy.Column(sqlalchemy.Integer, default=0)
+    rates_4 = sqlalchemy.Column(sqlalchemy.Integer, default=0)
+    rates_3 = sqlalchemy.Column(sqlalchemy.Integer, default=0)
+    rates_2 = sqlalchemy.Column(sqlalchemy.Integer, default=0)
+    rates_1 = sqlalchemy.Column(sqlalchemy.Integer, default=0)
+    views = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     owner_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
     owner = orm.relationship('User', foreign_keys='Projects.owner_id')
+    collaborators = orm.relation('User', secondary='association_collabs', backref='projects')
+    comments = orm.relation('Comment', secondary='association_comments', backref='projects')
+
+
+class Comment(SqlAlchemyBase):
+    __tablename__ = 'comments'
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
+    text = sqlalchemy.Column(sqlalchemy.Text, nullable=True)
+    creator_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('user.id'))
+    create_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now())
+    likes = sqlalchemy.Column(sqlalchemy.Integer, default=0)
+
+
+association_collabs = sqlalchemy.Table('association_collabs', SqlAlchemyBase.metadata,
+                                       sqlalchemy.Column('project_id', sqlalchemy.Integer,
+                                                         sqlalchemy.ForeignKey('projects.id')),
+                                       sqlalchemy.Column('collab_id', sqlalchemy.Integer,
+                                                         sqlalchemy.ForeignKey('users.id')))
+
+association_comments = sqlalchemy.Table('association_comments', SqlAlchemyBase.metadata,
+                                        sqlalchemy.Column('project_id', sqlalchemy.Integer,
+                                                          sqlalchemy.ForeignKey('projects.id')),
+                                        sqlalchemy.Column('comment_id', sqlalchemy.Integer,
+                                                          sqlalchemy.ForeignKey('comments.id')))
