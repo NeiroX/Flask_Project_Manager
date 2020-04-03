@@ -12,7 +12,8 @@ blueprint = Blueprint('authen', __name__,
 def check_user(form):
     sesion = db_session.create_session()
     user = sesion.query(User).filter(
-        (User.email == form.username_email.data) | (User.username == form.username_email.data)).first()
+        (User.email == form.username_email.data) | (
+                User.username == form.username_email.data)).first()
     if not user:
         return ('username', 'User does not exist')
     if not user.check_password(form.password.data):
@@ -30,12 +31,17 @@ def check_new_user(form: RegisterForm):
         return ('username', 'Username already taken')
     if form.age.data <= 0:
         return ('age', 'Incorrect age')
+    if type(form.age.data) != int:
+        return ('age', 'Field must be digit')
     return 'OK'
 
 
 @blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
+    countries_list = [(country, country) for country in
+                      [line.strip() for line in open('Data/countries.txt').readlines()]]
+    form.country.choices = countries_list
     if request.method == 'POST' and form.validate_on_submit():
         ans = check_new_user(form)
         print(ans)
