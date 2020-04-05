@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="jumbotron">
+    <div class="col-md-15 mb-4">
+
+          <div class="view overlay z-depth-1-half">
+            <img align="right" width="200" height="200" src={{ image }}>
+          </div>
+    </div>
+    <div class="col-md-16 mb-4">
+        <h1 class="display-4">{{name}}</h1>
+        <p>Author: {{author}}</p>
+        <p>Date of creation: {{create_date}}</p>
+        <p class="lead">{{short_description}}</p>
+        <hr class="my-4">
+        <p>{{full_description}}</p>
+    </div>
+</div>
+{% endblock %}

@@ -1,13 +1,15 @@
-from flask import Blueprint, render_template, request, redirect, make_response, url_for
-from sqlalchemy import func
+from flask import Blueprint, render_template, request, redirect, url_for, abort
 from forms import RegisterProjectForm
 from models import Projects, User
 import db_session
+from sqlalchemy import func
 import datetime
 from main import app
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 import os
+from flask_login import current_user
+from useful_functions import get_project
 
 blueprint = Blueprint('blog', __name__,
                       template_folder='templates')
@@ -26,8 +28,9 @@ def register_project():
         last_id = sesion.query(func.max(Projects.id)).one()
         image = request.files.get('image_field')
         if image and image.filename.rsplit('.')[1] in ['png', 'jpg', 'jpeg']:
-            filename = f'{current_user.id}_{int(last_id[0])+1}.' + image.filename.rsplit('.')[1]
-            image.save(os.path.join(app.config['UPLOAD_FOLDER'], os.path.join('project_imgs', filename)))
+            filename = f'{current_user.id}_{int(last_id[0]) + 1}.' + image.filename.rsplit('.')[1]
+            image.save(
+                os.path.join(app.config['UPLOAD_FOLDER'], os.path.join('project_img', filename)))
         for username in form.collaborators.data.split(', '):
             user = sesion.query(User).filter(User.username == username.strip()[1:]).first()
             if user:
@@ -37,3 +40,20 @@ def register_project():
         sesion.close()
         return redirect(url_for('base'))
     return render_template('register_project.html', form=form, title='Register project')
+
+
+@blueprint.route('/project/<int:id>', methods=['GET', 'POST'])
+def view_project(id):
+    project = get_project(id)
+    if project:
+        info = project.__dict__
+        print(info)
+        info['create_date'] = info['create_date'].ctime()
+        return render_template('blog_view.html', title=project.name,
+                               image=url_for(
+                                   "static",
+                                   filename=f'img/project_img/{project.owner.id}_{project.id}.jpg',
+                                   width=100, height=50),
+                               author=project.owner.username, **info)
+    else:
+        abort(404)
