@@ -67,6 +67,9 @@ def register():
 
 @blueprint.route('/login', methods=['GET', 'POST'])
 def login():
+    print('login', request.args.get('next'), request.args.get('login_message'))
+    next = request.args.get('next', url_for('base'))
+    messg = request.args.get('login_message', '')
     form = LoginForm()
     login_tries = int(request.cookies.get('login_tries', 0))
     if login_tries == 4:
@@ -79,15 +82,15 @@ def login():
         if ans != 'OK':
             attr = getattr(form, ans[0])
             attr.errors.append(ans[1])
-            resp = make_response(render_template('login.html', form=form, title='Login'))
+            resp = make_response(render_template('login.html', message_login=messg, form=form, title='Login'))
             resp.set_cookie('login_tries', str(login_tries + 1), max_age=60 * 2)
             return resp
         sesion = db_session.create_session()
         user = sesion.query(User).filter((User.email == form.username_email.data) | (
                 User.username == form.username_email.data)).first()
         login_user(user, remember=form.remember_me.data)
-        return redirect(url_for('base'))
-    resp = make_response(render_template('login.html', form=form, title='Login'))
+        return redirect(next)
+    resp = make_response(render_template('login.html', message_login=messg, form=form, title='Login'))
     resp.set_cookie('login_tries', str(login_tries + 1), max_age=60 * 2)
     return resp
 

@@ -28,6 +28,7 @@ class LoginForm(FlaskForm):
 
 class RegisterProjectForm(FlaskForm):
     name = StringField('* Project name', validators=[DataRequired()])
+    image_field=FileField('Project image')
     short_description = TextAreaField('* Short description', validators=[DataRequired()])
     full_description = TextAreaField('Full description')
     collaborators = StringField(

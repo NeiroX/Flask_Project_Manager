@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, make_response, abort
+from flask import Flask, render_template, request, make_response, abort, url_for, redirect
 from forms import RegisterForm
 from flask_login import LoginManager, current_user
 from models import User
@@ -30,11 +30,11 @@ def base():
     return response
 
 
-@app.route('/hello')
-def abor():
-    abort(404)
-
-
+@login_manager.unauthorized_handler
+def handle_unauth():
+    print('Unautharized')
+    resp = make_response(redirect(url_for('authen.login', next=request.url, login_message='Login required')))
+    return resp
 
 
 @app.before_request
