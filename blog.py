@@ -3,6 +3,7 @@ from forms import RegisterProjectForm
 from models import Projects, User
 import db_session
 import datetime
+from flask_login import current_user
 
 blueprint = Blueprint('blog', __name__,
                       template_folder='templates')
@@ -14,7 +15,8 @@ def register_project():
     if request.method == 'POST' and form.validate_on_submit():
         project = Projects(name=form.name.data,
                            short_description=form.short_description.data,
-                           full_description=form.full_description.data)
+                           full_description=form.full_description.data,
+                           owner_id=current_user.id)
         sesion = db_session.create_session()
         for username in form.collaborators.data.split(', '):
             user = sesion.query(User).filter(User.username == username.strip()[1:]).first()
