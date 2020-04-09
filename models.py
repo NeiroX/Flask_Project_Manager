@@ -1,5 +1,6 @@
 import datetime
 import sqlalchemy
+from flask import url_for
 from sqlalchemy import orm
 from db_session import SqlAlchemyBase
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -33,6 +34,7 @@ class Projects(SqlAlchemyBase):
     short_description = sqlalchemy.Column(sqlalchemy.Text, nullable=True)
     full_description = sqlalchemy.Column(sqlalchemy.Text, nullable=True)
     create_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now())
+    image_path=sqlalchemy.Column(sqlalchemy.String)
     edit_date = sqlalchemy.Column(sqlalchemy.DateTime)
     rates_5 = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     rates_4 = sqlalchemy.Column(sqlalchemy.Integer, default=0)

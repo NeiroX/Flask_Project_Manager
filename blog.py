@@ -1,8 +1,8 @@
-from flask import Blueprint, render_template, request, redirect, url_for, abort
+from flask import Blueprint, render_template, request, redirect, make_response, url_for, abort
+from sqlalchemy import func
 from forms import RegisterProjectForm
 from models import Projects, User
 import db_session
-from sqlalchemy import func
 import datetime
 from main import app
 from flask_login import current_user, login_required
@@ -26,11 +26,15 @@ def register_project():
                            owner_id=current_user.id)
         sesion = db_session.create_session()
         last_id = sesion.query(func.max(Projects.id)).one()
+        print(last_id)
         image = request.files.get('image_field')
         if image and image.filename.rsplit('.')[1] in ['png', 'jpg', 'jpeg']:
-            filename = f'{current_user.id}_{int(last_id[0]) + 1}.' + image.filename.rsplit('.')[1]
-            image.save(
-                os.path.join(app.config['UPLOAD_FOLDER'], os.path.join('project_img', filename)))
+            filename = f'{current_user.id}_{int(last_id[0])+1}.jpg'
+            image.save(os.path.join(app.config['UPLOAD_FOLDER'], os.path.join('project_imgs', filename)))
+            project.image_path = url_for('static',
+                                         filename=f'imgs/project_imgs/{current_user.id}_{int(last_id[0])+1}.jpg')
+        else:
+            project.image_path = url_for('static', filename='imgs/project_imgs/no_project_image.jpg')
         for username in form.collaborators.data.split(', '):
             user = sesion.query(User).filter(User.username == username.strip()[1:]).first()
             if user:
@@ -52,7 +56,7 @@ def view_project(id):
         return render_template('blog_view.html', title=project.name,
                                image=url_for(
                                    "static",
-                                   filename=f'img/project_img/{project.owner.id}_{project.id}.jpg',
+                                   filename=f'imgs/project_imgs/{project.owner.id}_{project.id}.jpg',
                                    width=100, height=50),
                                author=project.owner.username, **info)
     else:

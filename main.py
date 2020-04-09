@@ -1,13 +1,14 @@
 from flask import Flask, render_template, request, make_response, abort, url_for, redirect
 from forms import RegisterForm
 from flask_login import LoginManager, current_user
-from models import User
+from models import User, Projects
 from werkzeug.utils import secure_filename
 import os
 import authen
 import errors
 import blog
 import db_session
+from useful_functions import get_popular_projects, resize_image
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'flask_project_key'
@@ -24,8 +25,10 @@ def load_user(user_id):
 
 @app.route('/')
 def base():
+    sesion = db_session.create_session()
+    projects = get_popular_projects()
     message = request.cookies.get('error_message')
-    response = make_response(render_template('base.html', message=message))
+    response = make_response(render_template('first_screen.html', projects=projects, message=message))
     response.set_cookie('error_message', '1', max_age=0)
     return response
 

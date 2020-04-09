@@ -39,6 +39,7 @@ def check_new_user(form: RegisterForm):
 @blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
+
     countries_list = [(country, country) for country in
                       [line.strip() for line in open('Data/countries.txt').readlines()]]
     form.country.choices = countries_list

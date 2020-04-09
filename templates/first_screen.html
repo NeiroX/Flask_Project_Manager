@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+    <div>
+
+
+
+    </div>
+    <div class="card-deck">
+        {% for prjct in projects %}
+            <div class="card w-50">
+                <img alt="Card image cap" class="card-img-top" style= "max-width:400px; max-height:200px !important;" src={{prjct.image_path}} />
+                <div class="card-body">
+                    <div class="card-title">{{ prjct.name }}</div>
+                    <p class="card-text">{{ prjct.short_description }}</p>
+                    <a href={{'project/%d'| format(prjct.id)}} class="btn btn-primary">Show project</a>
+                </div>
+                <div class="card-footer">
+                    <a href="#">{{ prjct.owner.username }}</a>
+                    <small class="text-muted">Created: {{ prjct.create_date.strftime("%Y-%m-%d") }}</small><br>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
