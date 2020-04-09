@@ -27,6 +27,7 @@ def load_user(user_id):
 def base():
     sesion = db_session.create_session()
     projects = get_popular_projects()
+
     message = request.cookies.get('error_message')
     response = make_response(render_template('first_screen.html', projects=projects, message=message))
     response.set_cookie('error_message', '1', max_age=0)
