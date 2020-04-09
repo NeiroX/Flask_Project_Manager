@@ -33,6 +33,8 @@ def resize_image(img_url, w, h):
 import db_session
 from models import Projects
 from flask import abort
+from PIL import Image
+import os
 
 
 def get_project(id):
@@ -41,3 +43,20 @@ def get_project(id):
     if object_project:
         return object_project
     abort(404)
+
+
+# def get_comments(project_id):
+#     session = db_session.create_session()
+#     comments
+
+
+def resize_image(image_name, w, h):
+    try:
+        path = os.path.join(os.getcwd(), os.path.join('static/imgs/project_imgs',
+                                                      image_name))
+        image = Image.open(path)
+        new_image = image.resize((w, h))
+        new_image.save(path)
+        return 'OK'
+    except Exception as e:
+        return e

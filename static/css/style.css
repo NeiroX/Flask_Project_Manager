@@ -3,3 +3,8 @@
 }
 .lab{
     margin-bottom:10px;
+}
+
+.circle-image{
+      border-radius: 50%;
+}

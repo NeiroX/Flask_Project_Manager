@@ -12,7 +12,7 @@ from useful_functions import get_popular_projects, resize_image
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'flask_project_key'
-app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'static/img')
+app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'static/imgs')
 login_manager = LoginManager()
 login_manager.init_app(app)
 

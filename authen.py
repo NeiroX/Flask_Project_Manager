@@ -83,7 +83,8 @@ def login():
         if ans != 'OK':
             attr = getattr(form, ans[0])
             attr.errors.append(ans[1])
-            resp = make_response(render_template('login.html', message_login=messg, form=form, title='Login'))
+            resp = make_response(
+                render_template('login.html', message_login=messg, form=form, title='Login'))
             resp.set_cookie('login_tries', str(login_tries + 1), max_age=60 * 2)
             return resp
         sesion = db_session.create_session()
@@ -91,7 +92,8 @@ def login():
                 User.username == form.username_email.data)).first()
         login_user(user, remember=form.remember_me.data)
         return redirect(next)
-    resp = make_response(render_template('login.html', message_login=messg, form=form, title='Login'))
+    resp = make_response(
+        render_template('login.html', message_login=messg, form=form, title='Login'))
     resp.set_cookie('login_tries', str(login_tries + 1), max_age=60 * 2)
     return resp
 

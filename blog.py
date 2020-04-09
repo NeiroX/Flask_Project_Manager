@@ -1,3 +1,6 @@
+from flask import Blueprint, render_template, request, redirect, url_for, abort
+from forms import RegisterProjectForm, CommentForm
+from models import Projects, User, Comment
 from flask import Blueprint, render_template, request, redirect, make_response, url_for, abort
 from sqlalchemy import func
 from forms import RegisterProjectForm
@@ -9,7 +12,7 @@ from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 import os
 from flask_login import current_user
-from useful_functions import get_project
+from useful_functions import get_project, resize_image
 
 blueprint = Blueprint('blog', __name__,
                       template_folder='templates')
@@ -26,13 +29,16 @@ def register_project():
                            owner_id=current_user.id)
         sesion = db_session.create_session()
         last_id = sesion.query(func.max(Projects.id)).one()
-        print(last_id)
         image = request.files.get('image_field')
         if image and image.filename.rsplit('.')[1] in ['png', 'jpg', 'jpeg']:
-            filename = f'{current_user.id}_{int(last_id[0])+1}.jpg'
-            image.save(os.path.join(app.config['UPLOAD_FOLDER'], os.path.join('project_imgs', filename)))
+            res = last_id[0]
+            if not res:
+                res = 1
+            filename = f'{current_user.id}_{res + 1}.jpg'
+            image.save(
+                os.path.join(app.config['UPLOAD_FOLDER'], os.path.join('project_imgs', filename)))
             project.image_path = url_for('static',
-                                         filename=f'imgs/project_imgs/{current_user.id}_{int(last_id[0])+1}.jpg')
+                                         filename=f'imgs/project_imgs/{current_user.id}_{res + 1}.jpg')
         else:
             project.image_path = url_for('static', filename='imgs/project_imgs/no_project_image.jpg')
         for username in form.collaborators.data.split(', '):
@@ -49,15 +55,27 @@ def register_project():
 @blueprint.route('/project/<int:id>', methods=['GET', 'POST'])
 def view_project(id):
     project = get_project(id)
+    # comments = get_comments(id)
     if project:
+        form = CommentForm()
+        add_comment(project, form)
         info = project.__dict__
         print(info)
         info['create_date'] = info['create_date'].ctime()
+        filename = f'{project.owner.id}_{project.id}.jpg'
+        print(resize_image(filename, 200, 200))
         return render_template('blog_view.html', title=project.name,
                                image=url_for(
                                    "static",
-                                   filename=f'imgs/project_imgs/{project.owner.id}_{project.id}.jpg',
-                                   width=100, height=50),
+                                   filename='/'.join(info['image_path'].split('/')[2:])),
+                               form=form,
                                author=project.owner.username, **info)
     else:
         abort(404)
+
+
+def add_comment(project, form):
+    if request.method == 'POST' and form.validate_on_submit():
+        comment = Comment(text=form.text.data,
+                          creator_id=current_user.id)
+        project.comments.append(comment)
