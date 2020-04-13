@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, abort
+from flask import Blueprint, render_template, request, redirect, url_for, abort, session
 from forms import RegisterProjectForm, CommentForm
 from models import Projects, User, Comment
 from flask import Blueprint, render_template, request, redirect, make_response, url_for, abort
@@ -11,6 +11,7 @@ from main import app
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 import os
+import subprocess
 from flask_login import current_user
 from useful_functions import get_project, resize_image
 
@@ -31,6 +32,8 @@ def register_project():
         last_id = sesion.query(func.max(Projects.id)).one()
         image = request.files.get('image_field')
         if image and image.filename.rsplit('.')[1] in ['png', 'jpg', 'jpeg']:
+            if not last_id[0]:
+                last_id = 0
             filename = f'{current_user.id}_{int(last_id[0])+1}.jpg'
             filename = os.path.join(app.config['UPLOAD_FOLDER'], os.path.join('project_imgs', filename))
             image.save(filename)
@@ -44,6 +47,7 @@ def register_project():
         sesion.add(project)
         sesion.commit()
         sesion.close()
+        subprocess.call(f'python analyze_description.py {int(last_id[0])+1}', shell=True)
         return redirect(url_for('base'))
     return render_template('register_project.html', form=form, title='Register project')
 
@@ -57,8 +61,10 @@ def view_project(id):
         print('Went put')
         if comment_ans == 'OK':
             sesion = db_session.create_session()
-            com=sesion.query(Comment).filter(Comment.id == sesion.query(func.max(Comment.id))).first()
+            com = sesion.query(Comment).filter(Comment.id == sesion.query(func.max(Comment.id))).first()
             project.comments.append(com)
+            if not session.get('already_seen', False):
+                project.views += 1
             print('This ok')
             print(com.text)
             sesion.commit()

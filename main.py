@@ -9,10 +9,12 @@ import errors
 import blog
 import db_session
 from useful_functions import get_popular_projects, resize_image
+import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'flask_project_key'
 app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'static/imgs')
+app.config['PERMANENT_SESSION_LIFETIME']=datetime.timedelta(days=365*10)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -32,6 +34,9 @@ def base():
     response.set_cookie('error_message', '1', max_age=0)
     return response
 
+@app.route('/user/<username>')
+def get_user(username):
+    return render_template('')
 
 @login_manager.unauthorized_handler
 def handle_unauth():
