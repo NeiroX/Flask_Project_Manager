@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<div align="center">
+    <br>
+    <h1>Edit project</h1>
+</div>
+<form method="post" enctype="multipart/form-data" action="" novalidate>
+    {{form.hidden_tag()}}
+    {{form.csrf_tocken}}
+    <div class="row">
+        <div class="col">
+            <label class="lab">{{form.name.label}}</label>
+            {{form.name(class="form-control")}}
+            {% for error in form.full_description.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="lab">{{form.short_description.label}}</label>
+        {{form.short_description(class="form-control")}}
+        {% for error in form.short_description.errors %}
+        <p class="alert alert-danger" role="alert">
+            {{ error }}
+        </p>
+        {% endfor %}
+    </div>
+    <div class="form-group">
+        <label class="lab">{{form.full_description.label}}</label>
+        {{form.full_description(class="form-control")}}
+        {% for error in form.full_description.errors %}
+        <p class="alert alert-danger" role="alert">
+            {{ error }}
+        </p>
+        {% endfor %}
+    </div>
+    <div class="form-group">
+        <label class="lab">{{form.collaborators.label}}
+            <small class="form-text text-muted">add usernames using @;<br>
+                example: @username1,
+                @username2
+            </small>
+        </label>
+
+        {{form.collaborators(class="form-control")}}
+        {% for error in form.collaborators.errors %}
+        <p class="alert alert-danger" role="alert">
+            {{ error }}
+        </p>
+        {% endfor %}
+    </div>
+    <div class="form-group">
+        <label class="lab">{{form.image_field.label}}</label>
+        {{form.image_field(class="form-control")}}
+
+    </div>
+    {{ form.submit(type="submit", class="btn btn-primary") }}
+</form>
+{% endblock %}
