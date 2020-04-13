@@ -29,7 +29,8 @@ def base():
     projects = get_popular_projects()
 
     message = request.cookies.get('error_message')
-    response = make_response(render_template('first_screen.html', projects=projects, message=message))
+    response = make_response(
+        render_template('first_screen.html', projects=projects, message=message))
     response.set_cookie('error_message', '1', max_age=0)
     return response
 
@@ -37,7 +38,8 @@ def base():
 @login_manager.unauthorized_handler
 def handle_unauth():
     print('Unautharized')
-    resp = make_response(redirect(url_for('authen.login', next=request.url, login_message='Login required')))
+    resp = make_response(
+        redirect(url_for('authen.login', next=request.url, login_message='Login required')))
     return resp
 
 
