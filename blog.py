@@ -31,14 +31,10 @@ def register_project():
         last_id = sesion.query(func.max(Projects.id)).one()
         image = request.files.get('image_field')
         if image and image.filename.rsplit('.')[1] in ['png', 'jpg', 'jpeg']:
-            res = last_id[0]
-            if not res:
-                res = 1
-            filename = f'{current_user.id}_{res + 1}.jpg'
-            image.save(
-                os.path.join(app.config['UPLOAD_FOLDER'], os.path.join('project_imgs', filename)))
-            project.image_path = url_for('static',
-                                         filename=f'imgs/project_imgs/{current_user.id}_{res + 1}.jpg')
+            filename = f'{current_user.id}_{int(last_id[0])+1}.jpg'
+            filename = os.path.join(app.config['UPLOAD_FOLDER'], os.path.join('project_imgs', filename))
+            image.save(filename)
+            project.image_path = filename
         else:
             project.image_path = url_for('static', filename='imgs/project_imgs/no_project_image.jpg')
         for username in form.collaborators.data.split(', '):
@@ -54,20 +50,25 @@ def register_project():
 
 @blueprint.route('/project/<int:id>', methods=['GET', 'POST'])
 def view_project(id):
-    project = get_project(id)
-    # comments = get_comments(id)
+    project = get_project(id)  # type: Projects
     if project:
         form = CommentForm()
-        add_comment(project, form)
+        comment_ans = add_comment(project, form)
+        print('Went put')
+        if comment_ans == 'OK':
+            sesion = db_session.create_session()
+            com=sesion.query(Comment).filter(Comment.id == sesion.query(func.max(Comment.id))).first()
+            project.comments.append(com)
+            print('This ok')
+            print(com.text)
+            sesion.commit()
+
         info = project.__dict__
         print(info)
+        print('Date', project.create_date)
         info['create_date'] = info['create_date'].ctime()
-        filename = f'{project.owner.id}_{project.id}.jpg'
-        print(resize_image(filename, 200, 200))
         return render_template('blog_view.html', title=project.name,
-                               image=url_for(
-                                   "static",
-                                   filename='/'.join(info['image_path'].split('/')[2:])),
+                               image=project.image_path,
                                form=form,
                                author=project.owner.username, **info)
     else:
@@ -77,5 +78,11 @@ def view_project(id):
 def add_comment(project, form):
     if request.method == 'POST' and form.validate_on_submit():
         comment = Comment(text=form.text.data,
-                          creator_id=current_user.id)
-        project.comments.append(comment)
+                          creator_id=current_user.id,
+                          project_id=project.id)
+        sesion = db_session.create_session()
+        sesion.add(comment)
+        sesion.commit()
+        sesion.close()
+        return 'OK'
+    return None

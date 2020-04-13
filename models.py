@@ -45,7 +45,7 @@ class Projects(SqlAlchemyBase):
     owner_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
     owner = orm.relationship('User', foreign_keys='Projects.owner_id')
     collaborators = orm.relation('User', secondary='association_collabs', backref='projects')
-    comments = orm.relation('Comment', secondary='association_comments', backref='projects')
+    comments=orm.relationship('Comment',backref='projects',lazy='dynamic')
 
 
 class Comment(SqlAlchemyBase):
@@ -54,6 +54,7 @@ class Comment(SqlAlchemyBase):
     text = sqlalchemy.Column(sqlalchemy.Text, nullable=True)
     creator_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
     create_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now())
+    project_id=sqlalchemy.Column(sqlalchemy.Integer,sqlalchemy.ForeignKey('projects.id'))
     likes = sqlalchemy.Column(sqlalchemy.Integer, default=0)
 
 

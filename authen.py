@@ -62,7 +62,7 @@ def register():
         sesion.add(user)
         sesion.commit()
         sesion.close()
-        return redirect(url_for('base'))
+        return redirect(url_for('authen.login'))
     return render_template('register.html', form=form, title='Register')
 
 

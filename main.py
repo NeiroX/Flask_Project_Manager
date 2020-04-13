@@ -12,7 +12,7 @@ from useful_functions import get_popular_projects, resize_image
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'flask_project_key'
-app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'static/imgs')
+app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'static\\imgs')
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -27,6 +27,9 @@ def load_user(user_id):
 def base():
     sesion = db_session.create_session()
     projects = get_popular_projects()
+    for pr in projects:
+        for com in pr.comments:
+            print(com.text)
     message = request.cookies.get('error_message')
     response = make_response(render_template('first_screen.html', projects=projects, message=message))
     response.set_cookie('error_message', '1', max_age=0)
