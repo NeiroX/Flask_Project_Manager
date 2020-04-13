@@ -30,6 +30,8 @@ def resize_image(img_url, w, h):
         return 'OK'
     except Exception as e:
         return e
+
+
 import db_session
 from models import Projects
 from flask import abort
