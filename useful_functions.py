@@ -9,17 +9,18 @@ import errors
 import blog
 from PIL import Image
 import db_session
+from sqlalchemy.orm import lazyload, subqueryload
 
 
 def get_popular_projects():
     sesion = db_session.create_session()
 
-    return sesion.query(Projects).all()
+    return sesion.query(Projects).options(subqueryload(Projects.owner)).all()
 
 
 def get_recommended_projects():
     sesion = db_session.create_session()
-    return sesion.query(Projects).all()
+    return sesion.query(Projects).options(subqueryload(Projects.owner)).all()
 
 
 def resize_image(img_url, w, h):

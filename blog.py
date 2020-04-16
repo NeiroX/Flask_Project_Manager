@@ -7,7 +7,7 @@ from forms import RegisterProjectForm
 from models import Projects, User
 import db_session
 import datetime
-from main import app
+from main import app, handle_unauth
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 import os
@@ -31,10 +31,12 @@ def register_project():
         sesion = db_session.create_session()
         last_id = sesion.query(func.max(Projects.id)).one()
         image = request.files.get('image_field')
+        if not last_id[0]:
+            last_id = 1
+        else:
+            last_id = int(last_id[0]) + 1
         if image and image.filename.rsplit('.')[1] in ['png', 'jpg', 'jpeg']:
-            if not last_id[0]:
-                last_id = 0
-            filename = f'{current_user.id}_{int(last_id[0])+1}.jpg'
+            filename = f'{current_user.id}_{last_id}.jpg'
             filename = os.path.join(app.config['UPLOAD_FOLDER'], os.path.join('project_imgs', filename))
             image.save(filename)
             project.image_path = filename
@@ -47,7 +49,8 @@ def register_project():
         sesion.add(project)
         sesion.commit()
         sesion.close()
-        subprocess.call(f'python analyze_description.py {int(last_id[0])+1}', shell=True)
+        print('subprocess', last_id)
+        subprocess.call(f'python analyze_description.py {last_id}', shell=True)
         return redirect(url_for('base'))
     return render_template('register_project.html', form=form, title='Register project')
 
@@ -57,6 +60,8 @@ def view_project(id):
     project = get_project(id)  # type: Projects
     if project:
         form = CommentForm()
+        if request.method == 'POST' and current_user.is_anonymous:
+            return handle_unauth()
         comment_ans = add_comment(project, form)
         print('Went put')
         if comment_ans == 'OK':
@@ -83,6 +88,8 @@ def view_project(id):
 
 def add_comment(project, form):
     if request.method == 'POST' and form.validate_on_submit():
+        if current_user.is_anonymous:
+            return None
         comment = Comment(text=form.text.data,
                           creator_id=current_user.id,
                           project_id=project.id)

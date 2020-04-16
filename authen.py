@@ -43,6 +43,14 @@ def register():
     countries_list = [(country, country) for country in
                       [line.strip() for line in open('Data/countries.txt').readlines()]]
     form.country.choices = countries_list
+    pre_register = {'name': 'ME',
+                    'surname': 'YOU',
+                    'username': 'username',
+                    'password': 'hello',
+                    'password_again': 'hello',
+                    'age': 22,
+                    'country': 'Italy',
+                    'email': 'email@email.com'}
     if request.method == 'POST' and form.validate_on_submit():
         ans = check_new_user(form)
         print(ans)
@@ -63,6 +71,9 @@ def register():
         sesion.commit()
         sesion.close()
         return redirect(url_for('authen.login'))
+    for k in form.__dict__:
+        if k in pre_register.keys():
+            getattr(form, k).data = pre_register[k]
     return render_template('register.html', form=form, title='Register')
 
 
@@ -92,6 +103,7 @@ def login():
                 User.username == form.username_email.data)).first()
         login_user(user, remember=form.remember_me.data)
         return redirect(next)
+    form.username_email.data='username'
     resp = make_response(
         render_template('login.html', message_login=messg, form=form, title='Login'))
     resp.set_cookie('login_tries', str(login_tries + 1), max_age=60 * 2)

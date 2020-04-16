@@ -1,0 +1,32 @@
+{% extends "base.html"%}
+{% block content%}
+    <div class="jumbotron p-4 p-md-5 text-dark rounded">
+    <div class="col-md-15 mb-4">
+        <div class="view overlay z-depth-1-half">
+            <img class="circle-image" align="right" width="200" height="200" src={{project['image_path']}}>
+        </div>
+    </div>
+    <div class="col-md-16 mb-4">
+        <h1 class="display-4">{{project['name']}}</h1>
+        <a href="/user/{{project['owner_username']}}"><b>Author: {{project['owner_username']}}</b></a><br>
+
+        <p>Date of creation: {{project['create_date']}}</p>
+        <p class="lead">{{project['short_description']}}</p>
+        <hr class="my-4">
+        <p>{{project['full_description']}}</p>
+    </div>
+    <hr class="my-4">
+    <br>
+</div>
+<div class="container">
+    <br>
+    <div class="row">
+        {% for i in range(1,6) %}
+            <div class="col-md-3">
+                <button type="button" id="rank_{{i}}" class="btn btn-success"><i class="fas fa-cannabis"></i></button>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
