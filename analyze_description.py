@@ -10,10 +10,19 @@ global_init("db.sqlite")
 print('Working analization')
 parser = argparse.ArgumentParser()
 parser.add_argument('project_id', nargs=1, type=int)
+parser.add_argument('--editing', action='story_true', default=False)
 args = parser.parse_args()
 project_id = args.project_id
 sesion = create_session()
 project = sesion.query(Projects).get(project_id)  # type: Projects
+if args.editing:
+    sesion = create_session()
+    tags = sesion.query(project_tag_table).get(project.id).all()
+    if tags:
+        conn = create_coon()
+        deliting_elements = project_tag_table.delete().where(Projects.id == project.id)
+        sesion.execute(deliting_elements)
+        sesion.commit()
 probable_tags = list()
 all_tags = set()
 t = time.time()

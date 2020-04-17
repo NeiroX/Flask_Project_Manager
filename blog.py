@@ -114,6 +114,7 @@ def delete_news(id):
         sesion = db_session.create_session()
         sesion.delete(project)
         sesion.commit()
+        sesion.close()
     else:
         abort(404)
     return redirect('/')
@@ -157,7 +158,10 @@ def edit_blog(id):
             else:
                 project.image_path = url_for('static',
                                              filename='imgs/project_imgs/no_project_image.jpg')
+
             sesion.commit()
+            print('commited')
+            subprocess.call(f'python3 analyze_description.py {last_id} --editing', shell=True)
             return redirect('/')
         else:
             abort(404)
