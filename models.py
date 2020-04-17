@@ -5,6 +5,7 @@ from sqlalchemy import orm
 from db_session import SqlAlchemyBase
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin
+import json
 
 
 class User(SqlAlchemyBase, UserMixin):
@@ -19,6 +20,17 @@ class User(SqlAlchemyBase, UserMixin):
     age = sqlalchemy.Column(sqlalchemy.Integer)
     register_date = sqlalchemy.Column(sqlalchemy.DateTime)
     prjcts = sqlalchemy.Column(sqlalchemy.String)
+
+    def tojson(self, *args):
+        json_ls = {}
+        if len(args) > 0:
+            for attr in args:
+                json_ls[attr] = getattr(self, attr)
+        else:
+            for attr in ['name', 'surname', 'username', 'email', 'country', 'age']:
+                json_ls[attr] = getattr(self, attr)
+        print('owner to json', json_ls)
+        return json_ls
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
@@ -43,9 +55,34 @@ class Projects(SqlAlchemyBase):
     rates_1 = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     views = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     owner_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
-    owner = orm.relationship('User', foreign_keys='Projects.owner_id')
+    owner = orm.relationship('User', foreign_keys='Projects.owner_id')  # type: User
     collaborators = orm.relation('User', secondary='association_collabs', backref='projects')
-    comments=orm.relationship('Comment',backref='projects',lazy='dynamic')
+    comments = orm.relationship('Comment', backref='projects', lazy='dynamic')
+
+    def tojson(self, *args):
+        json_ls = {}
+        if len(args) > 0:
+            for arg in args:
+                json_ls[arg] = getattr(self, arg)
+        else:
+            for attr in ['name', 'short_description', 'full_description', 'create_date', 'image_path', 'edit_date']:
+                json_ls[attr] = getattr(self, attr)
+            owner_json = self.owner.tojson()
+            json_ls.update({'owner_' + key: owner_json[key] for key in owner_json.keys()})
+        print('project to json', json_ls)
+        return json_ls
+
+    def filter_text(self):
+        words = []
+        for word in self.full_description.split(' '):
+            word = word.strip()
+            if not word.isalpha():
+                if len(word) == 1:
+                    continue
+                else:
+                    word = word[:-1]
+            words.append(word.lower())
+        return words
 
 
 class Comment(SqlAlchemyBase):
@@ -54,7 +91,7 @@ class Comment(SqlAlchemyBase):
     text = sqlalchemy.Column(sqlalchemy.Text, nullable=True)
     creator_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
     create_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now())
-    project_id=sqlalchemy.Column(sqlalchemy.Integer,sqlalchemy.ForeignKey('projects.id'))
+    project_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('projects.id'))
     likes = sqlalchemy.Column(sqlalchemy.Integer, default=0)
 
 
@@ -69,3 +106,9 @@ association_comments = sqlalchemy.Table('association_comments', SqlAlchemyBase.m
                                                           sqlalchemy.ForeignKey('projects.id')),
                                         sqlalchemy.Column('comment_id', sqlalchemy.Integer,
                                                           sqlalchemy.ForeignKey('comments.id')))
+
+ranked_table = sqlalchemy.Table('ranked_table', SqlAlchemyBase.metadata,
+                                sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True, autoincrement=True),
+                                sqlalchemy.Column('project_id', sqlalchemy.Integer),
+                                sqlalchemy.Column('user_id', sqlalchemy.Integer),
+                                sqlalchemy.Column('ranked', sqlalchemy.Boolean))

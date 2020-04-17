@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, make_response, abort, url_for, redirect
+from flask import Flask, render_template, request, make_response, abort, url_for, redirect, jsonify
 from forms import RegisterForm
 from flask_login import LoginManager, current_user
 from models import User, Projects
@@ -8,11 +8,14 @@ import authen
 import errors
 import blog
 import db_session
+import ranking_projects
 from useful_functions import get_popular_projects, resize_image
+import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'flask_project_key'
 app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'static/imgs')
+app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=365 * 10)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -34,6 +37,17 @@ def base():
     return response
 
 
+@app.route('/like/', methods=['POST'])
+def like():
+    print('Like this project', request.form['prj_id'])
+    return jsonify({'status': 'OK'})
+
+
+@app.route('/user/<username>')
+def get_user(username):
+    return render_template('')
+
+
 @login_manager.unauthorized_handler
 def handle_unauth():
     print('Unautharized')
@@ -52,4 +66,5 @@ if __name__ == '__main__':
     app.register_blueprint(authen.blueprint)
     app.register_blueprint(errors.blueprint)
     app.register_blueprint(blog.blueprint)
+    app.register_blueprint(ranking_projects.blueprint,url_prefix='/rank-projects')
     app.run()

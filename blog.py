@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, abort
+from flask import Blueprint, render_template, request, redirect, url_for, abort, session
 from forms import RegisterProjectForm, CommentForm
 from models import Projects, User, Comment
 from flask import Blueprint, render_template, request, redirect, make_response, url_for, abort
@@ -7,10 +7,11 @@ from forms import RegisterProjectForm, EditProjectForm
 from models import Projects, User
 import db_session
 import datetime
-from main import app
+from main import app, handle_unauth
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 import os
+import subprocess
 from flask_login import current_user
 from useful_functions import get_project, resize_image
 
@@ -31,8 +32,12 @@ def register_project():
         sesion = db_session.create_session()
         last_id = sesion.query(func.max(Projects.id)).one()
         image = request.files.get('image_field')
+        if not last_id[0]:
+            last_id = 1
+        else:
+            last_id = int(last_id[0]) + 1
         if image and image.filename.rsplit('.')[1] in ['png', 'jpg', 'jpeg']:
-            filename = f'{current_user.id}_{int(last_id[0])+1}.jpg'
+            filename = f'{current_user.id}_{last_id}.jpg'
             filename = os.path.join(app.config['UPLOAD_FOLDER'], os.path.join('project_imgs', filename))
             image.save(filename)
             project.image_path = filename
@@ -45,6 +50,8 @@ def register_project():
         sesion.add(project)
         sesion.commit()
         sesion.close()
+        print('subprocess', last_id)
+        subprocess.call(f'python analyze_description.py {last_id}', shell=True)
         return redirect(url_for('base'))
     return render_template('register_project.html', form=form, title='Register project')
 
@@ -55,12 +62,16 @@ def view_project(id):
     print()
     if project:
         form = CommentForm()
+        if request.method == 'POST' and current_user.is_anonymous:
+            return handle_unauth()
         comment_ans = add_comment(project, form)
         print('Went put')
         if comment_ans == 'OK':
             sesion = db_session.create_session()
-            com=sesion.query(Comment).filter(Comment.id == sesion.query(func.max(Comment.id))).first()
+            com = sesion.query(Comment).filter(Comment.id == sesion.query(func.max(Comment.id))).first()
             project.comments.append(com)
+            if not session.get('already_seen', False):
+                project.views += 1
             print('This ok')
             print(com.text)
             sesion.commit()
@@ -80,6 +91,8 @@ def view_project(id):
 @login_required
 def add_comment(project, form):
     if request.method == 'POST' and form.validate_on_submit():
+        if current_user.is_anonymous:
+            return None
         comment = Comment(text=form.text.data,
                           creator_id=current_user.id,
                           project_id=project.id)
