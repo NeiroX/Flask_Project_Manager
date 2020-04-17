@@ -99,12 +99,12 @@ def add_comment(project, form):
 
 @app.route('/project_delete/<int:id>', methods=['GET', 'POST'])
 @login_required
-def news_delete(id):
-    session = db_session.create_session()
+def delete_news(id):
     project = get_project(id)
     if project:
-        session.delete(project)
-        session.commit()
+        sesion = db_session.create_session()
+        sesion.delete(project)
+        sesion.commit()
     else:
         abort(404)
     return redirect('/')
