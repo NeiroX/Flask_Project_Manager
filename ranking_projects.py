@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, request, redirect, url_for, abort, session, make_response
+from flask import Blueprint, render_template, request, redirect, url_for, abort, session, \
+    make_response
 from db_session import create_session, create_coon
 from models import ranked_table, Projects
 from flask_login import current_user

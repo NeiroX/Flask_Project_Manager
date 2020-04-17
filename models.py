@@ -2,7 +2,7 @@ import datetime
 import sqlalchemy
 from flask import url_for
 from sqlalchemy import orm
-from db_session import SqlAlchemyBase
+from db_session import SqlAlchemyBase, create_coon
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin
 import json
@@ -65,7 +65,8 @@ class Projects(SqlAlchemyBase):
             for arg in args:
                 json_ls[arg] = getattr(self, arg)
         else:
-            for attr in ['name', 'short_description', 'full_description', 'create_date', 'image_path', 'edit_date']:
+            for attr in ['name', 'short_description', 'full_description', 'create_date',
+                         'image_path', 'edit_date']:
                 json_ls[attr] = getattr(self, attr)
             owner_json = self.owner.tojson()
             json_ls.update({'owner_' + key: owner_json[key] for key in owner_json.keys()})
@@ -74,7 +75,7 @@ class Projects(SqlAlchemyBase):
 
     def filter_text(self):
         words = []
-        for word in self.full_description.split(' '):
+        for word in self.short_description.split():
             word = word.strip()
             if not word.isalpha():
                 if len(word) == 1:
@@ -95,6 +96,12 @@ class Comment(SqlAlchemyBase):
     likes = sqlalchemy.Column(sqlalchemy.Integer, default=0)
 
 
+class Tags(SqlAlchemyBase):
+    __tablename__ = 'tags'
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
+    interest = sqlalchemy.Column(sqlalchemy.String, unique=True)
+
+
 association_collabs = sqlalchemy.Table('association_collabs', SqlAlchemyBase.metadata,
                                        sqlalchemy.Column('project_id', sqlalchemy.Integer,
                                                          sqlalchemy.ForeignKey('projects.id')),
@@ -108,7 +115,16 @@ association_comments = sqlalchemy.Table('association_comments', SqlAlchemyBase.m
                                                           sqlalchemy.ForeignKey('comments.id')))
 
 ranked_table = sqlalchemy.Table('ranked_table', SqlAlchemyBase.metadata,
-                                sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True, autoincrement=True),
+                                sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True,
+                                                  autoincrement=True),
                                 sqlalchemy.Column('project_id', sqlalchemy.Integer),
                                 sqlalchemy.Column('user_id', sqlalchemy.Integer),
                                 sqlalchemy.Column('ranked', sqlalchemy.Boolean))
+
+user_interest_table = sqlalchemy.Table('user_interest_table', SqlAlchemyBase.metadata,
+                                       sqlalchemy.Column('user_id', sqlalchemy.Integer),
+                                       sqlalchemy.Column('tag_id', sqlalchemy.Integer))
+
+project_tag_table = sqlalchemy.Table('project_tag_table', SqlAlchemyBase.metadata,
+                                     sqlalchemy.Column('project_id', sqlalchemy.Integer),
+                                     sqlalchemy.Column('tag_id', sqlalchemy.Integer))

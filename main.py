@@ -66,5 +66,5 @@ if __name__ == '__main__':
     app.register_blueprint(authen.blueprint)
     app.register_blueprint(errors.blueprint)
     app.register_blueprint(blog.blueprint)
-    app.register_blueprint(ranking_projects.blueprint,url_prefix='/rank-projects')
+    app.register_blueprint(ranking_projects.blueprint, url_prefix='/rank-projects')
     app.run()

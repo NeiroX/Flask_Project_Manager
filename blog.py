@@ -38,7 +38,8 @@ def register_project():
             last_id = int(last_id[0]) + 1
         if image and image.filename.rsplit('.')[1] in ['png', 'jpg', 'jpeg']:
             filename = f'{current_user.id}_{last_id}.jpg'
-            filename = os.path.join(app.config['UPLOAD_FOLDER'], os.path.join('project_imgs', filename))
+            filename = os.path.join(app.config['UPLOAD_FOLDER'],
+                                    os.path.join('project_imgs', filename))
             image.save(filename)
             project.image_path = filename
         else:
@@ -50,8 +51,8 @@ def register_project():
         sesion.add(project)
         sesion.commit()
         sesion.close()
-        print('subprocess', last_id)
-        subprocess.call(f'python analyze_description.py {last_id}', shell=True)
+        print('subprocess with last_id:', last_id)
+        subprocess.call(f'python3 analyze_description.py {last_id}', shell=True)
         return redirect(url_for('base'))
     return render_template('register_project.html', form=form, title='Register project')
 
@@ -68,7 +69,8 @@ def view_project(id):
         print('Went put')
         if comment_ans == 'OK':
             sesion = db_session.create_session()
-            com = sesion.query(Comment).filter(Comment.id == sesion.query(func.max(Comment.id))).first()
+            com = sesion.query(Comment).filter(
+                Comment.id == sesion.query(func.max(Comment.id))).first()
             project.comments.append(com)
             if not session.get('already_seen', False):
                 project.views += 1
