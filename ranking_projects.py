@@ -1,38 +1,65 @@
-from flask import Blueprint, render_template, request, redirect, url_for, abort, session, make_response
+from flask import Blueprint, render_template, request, redirect, url_for, abort, session, make_response, jsonify
 from db_session import create_session, create_coon
 from models import ranked_table, Projects
 from flask_login import current_user
+from sqlalchemy import insert
 
 blueprint = Blueprint('ranking_projects', __name__, template_folder='templates')
 
 
-def add_to_already_ranked(id):
+def add_to_already_ranked(id, rank):
     if current_user.is_authenticated:
         conn = create_coon()
-        ins = ranked_table.insert().values(project_id=id, user_id=current_user.id, ranked=True)
+        ins = ranked_table.insert().values(project_id=id, user_id=current_user.id, rank=rank)
         conn.execute(ins)
+        sesion = create_session()
+        c_prjct = sesion.query(Projects).get(id)
+        if not c_prjct:
+            return {'response': 404}
+        rts = getattr(c_prjct, f'rates_{rank[-1]}')
+        setattr(c_prjct, f'rates_{rank[-1]}', int(rts) + 1)
+        sesion.commit()
+        return {'response': 200}
+    return {'response': 403}
 
 
-def choose_project():
-    last_prjct_id = request.cookies.get('last_project_id', None)
+@blueprint.route('/add_rank')
+def add():
+    print('Add rank', current_user.is_authenticated)
+    print(request.args.get('pr_id'), request.args.get('rank'))
+    ans = add_to_already_ranked(int(request.args.get('pr_id')), request.args.get('rank'))
+    if ans['response']==200:
+        next_project=choose_projects()[0]
+        return jsonify(next_project.tojson())
+    return jsonify(ans)
+
+
+def choose_projects():
+    '''this function is for returning single project to be displayed as a rated one'''
     sesion = create_session()
     if current_user.is_anonymous:
-        try:
-            return (sesion.query(Projects).get(int(last_prjct_id) + 1), int(last_prjct_id) + 1)
-        except:
-            abort(404)
-    else:
+        '''Unauthorized user. If he has a cookie, return the next project to cookie. else return first project from db'''
+        last_prjct_id = request.cookies.get('last_project_id', None)
         if last_prjct_id:
-            c_id = int(last_prjct_id) + 1
+            last_prjct_id = int(last_prjct_id) + 1
         else:
-            c_id = 1
-        return (sesion.query(Projects).get(c_id), c_id)
+            last_prjct_id = 1
+        return (sesion.query(Projects).get(last_prjct_id), last_prjct_id)
+    else:
+        '''TODO: Either use knn algorithm for finding best project. or just iterate through user interests'''
+        '''Now just returns the same thing as unauthorized'''
+        last_prjct_id = request.cookies.get('last_project_id', None)
+        if last_prjct_id:
+            last_prjct_id = int(last_prjct_id) + 1
+        else:
+            last_prjct_id = 1
+        return (sesion.query(Projects).get(last_prjct_id), last_prjct_id)
 
 
 @blueprint.route('/', methods=['GET', 'POST'])
 def rank_projects():
-    front_project, new_last_id = choose_project()  # type: Projects, int
-    response = make_response(render_template('rank_project.html', project=front_project.tojson()))
+    first_project, new_last_id = choose_projects()  # type: Projects,int
+    response = make_response(render_template('rank_project.html', project=first_project.tojson()))
     response.set_cookie('last_project_id', str(new_last_id))
-    add_to_already_ranked(new_last_id)
+
     return response

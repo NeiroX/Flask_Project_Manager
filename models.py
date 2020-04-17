@@ -65,7 +65,7 @@ class Projects(SqlAlchemyBase):
             for arg in args:
                 json_ls[arg] = getattr(self, arg)
         else:
-            for attr in ['name', 'short_description', 'full_description', 'create_date', 'image_path', 'edit_date']:
+            for attr in ['id','name', 'short_description', 'full_description', 'create_date', 'image_path', 'edit_date']:
                 json_ls[attr] = getattr(self, attr)
             owner_json = self.owner.tojson()
             json_ls.update({'owner_' + key: owner_json[key] for key in owner_json.keys()})
@@ -111,4 +111,4 @@ ranked_table = sqlalchemy.Table('ranked_table', SqlAlchemyBase.metadata,
                                 sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True, autoincrement=True),
                                 sqlalchemy.Column('project_id', sqlalchemy.Integer),
                                 sqlalchemy.Column('user_id', sqlalchemy.Integer),
-                                sqlalchemy.Column('ranked', sqlalchemy.Boolean))
+                                sqlalchemy.Column('rank', sqlalchemy.Integer))

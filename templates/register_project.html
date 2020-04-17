@@ -20,6 +20,7 @@
     </div>
     <div class="form-group">
         <label class="lab">{{form.short_description.label}}</label>
+        <small>No more than 150 symbols</small>
         {{form.short_description(class="form-control")}}
         {% for error in form.short_description.errors %}
         <p class="alert alert-danger" role="alert">

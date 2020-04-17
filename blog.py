@@ -19,6 +19,12 @@ blueprint = Blueprint('blog', __name__,
                       template_folder='templates')
 
 
+def check_project(form):
+    if (len(form.short_description.data) >= 150):
+        return ('short_description', 'Length of short description should be less than 150')
+    return 'OK'
+
+
 @blueprint.route('/register-project', methods=['GET', 'POST'])
 @login_required
 def register_project():
@@ -28,6 +34,11 @@ def register_project():
                            short_description=form.short_description.data,
                            full_description=form.full_description.data,
                            owner_id=current_user.id)
+        resp = check_project(form)
+        if resp != 'OK':
+            err_attr = getattr(form, resp[0])
+            err_attr.errors.append(resp[1])
+            return render_template('register_project.html', form=form, title='Register project')
         sesion = db_session.create_session()
         last_id = sesion.query(func.max(Projects.id)).one()
         image = request.files.get('image_field')
