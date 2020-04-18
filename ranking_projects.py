@@ -23,14 +23,17 @@ def add_to_already_ranked(id, rank):
     return {'response': 403}
 
 
-@blueprint.route('/add_rank')
+@blueprint.route('/add_rank', methods=['GET', 'POST'])
 def add():
     print('Add rank', current_user.is_authenticated)
     print(request.args.get('pr_id'), request.args.get('rank'))
     ans = add_to_already_ranked(int(request.args.get('pr_id')), request.args.get('rank'))
-    if ans['response']==200:
-        next_project=choose_projects()[0]
-        return jsonify(next_project.tojson())
+    if ans['response'] == 200:
+        next_project, new_last_id = choose_projects()
+        response = make_response(render_template('rank_project.html', project=next_project.tojson()))
+        response.set_cookie('last_project_id', str(new_last_id))
+        return response
+        # return jsonify(next_project.tojson())
     return jsonify(ans)
 
 
@@ -38,7 +41,8 @@ def choose_projects():
     '''this function is for returning single project to be displayed as a rated one'''
     sesion = create_session()
     if current_user.is_anonymous:
-        '''Unauthorized user. If he has a cookie, return the next project to cookie. else return first project from db'''
+        '''Unauthorized user. If he has a cookie, return the next project to cookie.
+         else return first project from db'''
         last_prjct_id = request.cookies.get('last_project_id', None)
         if last_prjct_id:
             last_prjct_id = int(last_prjct_id) + 1
@@ -61,5 +65,4 @@ def rank_projects():
     first_project, new_last_id = choose_projects()  # type: Projects,int
     response = make_response(render_template('rank_project.html', project=first_project.tojson()))
     response.set_cookie('last_project_id', str(new_last_id))
-
     return response

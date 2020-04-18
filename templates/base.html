@@ -31,11 +31,8 @@
             $('button.rate-button').bind('click',function(event){
                 var req=new XMLHttpRequest();
                 req.overrideMimeType("application/json");
+                console.log(event.target.id,'helo there');
                 req.open('GET',$SCRIPT_ROOT+'/rank-projects/add_rank?pr_id='+$('#pr_id').text()+'&rank='+event.target.id,true);
-                req.onload=function(){
-                    var jsonResponse=JSON.parse(req.responseText);
-                    console.log(jsonResponse);
-                };
                 req.send(null);
             });
         });
