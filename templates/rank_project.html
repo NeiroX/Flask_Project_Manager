@@ -1,10 +1,12 @@
 {% extends "base.html"%}
 {% block content%}
     <p hidden id="pr_id">{{project['id']}}</p>
-    <div class="jumbotron p-4 p-md-5 text-dark rounded">
+
+<div class="jumbotron p-4 p-md-5 text-dark rounded" xmlns="http://www.w3.org/1999/html">
     <div class="col-md-15 mb-4">
         <div class="view overlay z-depth-1-half">
-            <img class="circle-image" align="right" id="project_image"  width="200" height="200" src={{project['image_path']}}>
+            <img class="circle-image" align="right" width="200" id="project_image"  height="200"
+                 src={{project['image_path']}}>
         </div>
     </div>
     <div class="col-md-16 mb-4">

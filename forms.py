@@ -26,14 +26,21 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 
-class RegisterProjectForm(FlaskForm):
+class ProjectForm(FlaskForm):
     name = StringField('* Project name', validators=[DataRequired()])
     image_field = FileField('Project image')
     short_description = TextAreaField('* Short description', validators=[DataRequired()])
     full_description = TextAreaField('Full description')
     collaborators = StringField(
         'Collaborators')
+
+
+class RegisterProjectForm(ProjectForm):
     submit = SubmitField('Create project')
+
+
+class EditProjectForm(ProjectForm):
+    submit = SubmitField('Save')
 
 
 class CommentForm(FlaskForm):
