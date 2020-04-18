@@ -10,7 +10,7 @@ global_init("db.sqlite")
 print('Working analization')
 parser = argparse.ArgumentParser()
 parser.add_argument('project_id', nargs=1, type=int)
-parser.add_argument('--editing', action='story_true', default=False)
+parser.add_argument('--editing', action='store_true', default=False)
 args = parser.parse_args()
 project_id = args.project_id
 sesion = create_session()
@@ -23,7 +23,7 @@ if args.editing:
         deliting_elements = project_tag_table.delete().where(Projects.id == project.id)
         sesion.execute(deliting_elements)
         sesion.commit()
-probable_tags = list()
+probable_tags = []
 all_tags = set()
 t = time.time()
 with open(os.path.join(os.getcwd(), 'data/main_tags.txt')) as main_tags_file:
@@ -32,9 +32,11 @@ with open(os.path.join(os.getcwd(), 'data/main_tags.txt')) as main_tags_file:
 formatted_words = project.filter_text()
 print('Отформатированный текст:', formatted_words)
 for word in formatted_words:
-    word = word.replace('\r\n', ' ').strip()
-    if word in all_tags or word.startswith('~'):
-        probable_tags.append(word.replace('~', ''))
+    word = word.strip()
+    if (word.startswith('~') and word[1:]in all_tags)or word in all_tags:
+        probable_tags.append(word.replace('~',''))
+    elif word.startswith('~'):
+        probable_tags.append(word[1:])
 print('Теги проекта:', probable_tags)
 print(time.time() - t)
 for name_tag in probable_tags:
