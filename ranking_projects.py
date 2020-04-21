@@ -16,23 +16,26 @@ def add_to_already_ranked(id):
 
 def choose_project():
     last_prjct_id = request.cookies.get('last_project_id', None)
+    print(last_prjct_id)
     sesion = create_session()
     if current_user.is_anonymous:
         try:
-            return (sesion.query(Projects).get(int(last_prjct_id) + 1), int(last_prjct_id) + 1)
-        except:
+            return sesion.query(Projects).get(int(last_prjct_id) + 1), int(last_prjct_id) + 1
+        except Exception as e:
+            print(e.__class__.__name__)
             abort(404)
     else:
         if last_prjct_id:
-            c_id = int(last_prjct_id) + 1
+            c_id = int(last_prjct_id)
         else:
             c_id = 1
-        return (sesion.query(Projects).get(c_id), c_id)
+        return sesion.query(Projects).get(c_id), c_id
 
 
 @blueprint.route('/', methods=['GET', 'POST'])
 def rank_projects():
     front_project, new_last_id = choose_project()  # type: Projects, int
+    print(front_project, new_last_id)
     response = make_response(render_template('rank_project.html', project=front_project.tojson()))
     response.set_cookie('last_project_id', str(new_last_id))
     add_to_already_ranked(new_last_id)

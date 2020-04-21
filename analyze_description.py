@@ -33,8 +33,8 @@ formatted_words = project.filter_text()
 print('Отформатированный текст:', formatted_words)
 for word in formatted_words:
     word = word.strip()
-    if (word.startswith('~') and word[1:]in all_tags)or word in all_tags:
-        probable_tags.append(word.replace('~',''))
+    if (word.startswith('~') and word[1:] in all_tags) or word in all_tags:
+        probable_tags.append(word.replace('~', ''))
     elif word.startswith('~'):
         probable_tags.append(word[1:])
 print('Теги проекта:', probable_tags)

@@ -16,3 +16,48 @@
 .checked {
     color: orange;
 }
+
+.rating {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%)
+    display: flex;
+}
+
+.rating input {
+    display: none;
+}
+
+.rating label {
+    display: block;
+    cursor: pointer;
+    width: 50px;
+    background: #ccc;
+}
+
+.rating label:before {
+    content: '\f005';
+    font-family: fontAwesome;
+    position: relative;
+    display: block;
+    font-size: 50px;
+    color: #101010;
+}
+.rating label:after {
+    content: '\f005';
+    font-family: fontAwesome;
+    position: absolute;
+    display: block;
+    font-size: 50px;
+    color: #1f9cff;
+    top: 0;
+    opacity: 1;
+    transition: .5s;
+    text-shadow: 0 2px 5px rgb(0, 0, 0);
+}
+
+.rating label:hover:after
+.rating input:checked ~ label:after{
+    opacity: 1;
+}
