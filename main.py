@@ -9,7 +9,7 @@ import errors
 import blog
 import db_session
 import ranking_projects
-from useful_functions import get_popular_projects, resize_image
+from useful_functions import get_popular_projects, resize_image, get_recommended_projects
 import datetime
 
 app = Flask(__name__)
@@ -28,11 +28,13 @@ def load_user(user_id):
 
 @app.route('/')
 def base():
-    sesion = db_session.create_session()
-    projects = get_popular_projects()
+    popular_projects = get_popular_projects()
+    recommended_projects = get_recommended_projects()
     message = request.cookies.get('error_message')
     response = make_response(
-        render_template('first_screen.html', projects=projects, message=message))
+        render_template('first_screen.html', popular_projects=popular_projects,
+                        recommended_projects=recommended_projects,
+                        message=message))
     response.set_cookie('error_message', '1', max_age=0)
     return response
 
@@ -65,6 +67,6 @@ if __name__ == '__main__':
     db_session.global_init("db.sqlite")
     app.register_blueprint(authen.blueprint)
     app.register_blueprint(errors.blueprint)
-    app.register_blueprint(blog.blueprint)
+    app.register_blueprint(blog.blueprint, url_prefix='/project')
     app.register_blueprint(ranking_projects.blueprint, url_prefix='/rank-projects')
-    app.run()
+    app.run(port=8080, host='127.0.0.1')

@@ -29,15 +29,14 @@ def add():
     print(request.args.get('pr_id'), request.args.get('rank'))
     ans = add_to_already_ranked(int(request.args.get('pr_id')), request.args.get('rank'))
     if ans['response'] == 200:
-        next_project, new_last_id = choose_projects()
+        next_project, new_last_id = choose_project()
         response = make_response(render_template('rank_project.html', project=next_project.tojson()))
         response.set_cookie('last_project_id', str(new_last_id))
         return response
         # return jsonify(next_project.tojson())
     return jsonify(ans)
 
-
-def choose_projects():
+def choose_project():
     '''this function is for returning single project to be displayed as a rated one'''
     sesion = create_session()
     if current_user.is_anonymous:
@@ -48,7 +47,6 @@ def choose_projects():
             last_prjct_id = int(last_prjct_id) + 1
         else:
             last_prjct_id = 1
-        return (sesion.query(Projects).get(last_prjct_id), last_prjct_id)
     else:
         '''TODO: Either use knn algorithm for finding best project. or just iterate through user interests'''
         '''Now just returns the same thing as unauthorized'''
@@ -57,12 +55,20 @@ def choose_projects():
             last_prjct_id = int(last_prjct_id) + 1
         else:
             last_prjct_id = 1
-        return (sesion.query(Projects).get(last_prjct_id), last_prjct_id)
+    project = sesion.query(Projects).get(last_prjct_id)
+    if not project:
+        return None
+    return (project, last_prjct_id)
 
 
 @blueprint.route('/', methods=['GET', 'POST'])
 def rank_projects():
-    first_project, new_last_id = choose_projects()  # type: Projects,int
+    project = choose_project()  # type: Projects,int
+    if not project:
+        response = make_response(redirect(url_for('base')))
+        response.set_cookie('error_message', '<strong>You have already ranked all the projects</strong>', max_age=60)
+        return response
+    first_project, new_last_id = project
     response = make_response(render_template('rank_project.html', project=first_project.tojson()))
     response.set_cookie('last_project_id', str(new_last_id))
     return response

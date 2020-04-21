@@ -65,7 +65,7 @@ class Projects(SqlAlchemyBase):
             for arg in args:
                 json_ls[arg] = getattr(self, arg)
         else:
-            for attr in ['id','name', 'short_description', 'full_description', 'create_date',
+            for attr in ['id', 'name', 'short_description', 'full_description', 'create_date',
                          'image_path', 'edit_date']:
                 json_ls[attr] = getattr(self, attr)
             owner_json = self.owner.tojson()
@@ -77,7 +77,7 @@ class Projects(SqlAlchemyBase):
         words = []
         for word in self.short_description.split():
             word = word.strip()
-            if not word.isalpha():
+            if not word[-1].isalpha():
                 if len(word) == 1:
                     continue
                 else:

@@ -1,6 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, url_for, abort, session
+from flask import Blueprint, render_template, request, redirect, url_for, abort, session, Response, jsonify
 from forms import RegisterProjectForm, CommentForm
-from models import Projects, User, Comment
+from models import Projects, User, Comment, Tags, project_tag_table
 from flask import Blueprint, render_template, request, redirect, make_response, url_for, abort
 from sqlalchemy import func
 from forms import RegisterProjectForm, EditProjectForm
@@ -10,13 +10,35 @@ import datetime
 from main import app, handle_unauth
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
+import requests
 import os
 import subprocess
 from flask_login import current_user
 from useful_functions import get_project, resize_image
+from analyze_description import analyze_description
 
 blueprint = Blueprint('blog', __name__,
                       template_folder='templates')
+
+
+def add_tags_to_project(prj_id, tags):
+    sesion = db_session.create_session()
+    for tag_name in tags:
+        tag = sesion.query(Tags).filter(Tags.interest == tag_name).first()
+        if not tag:
+            new_tag = Tags(interest=tag_name)
+            sesion.add(new_tag)
+            sesion.commit()
+            last_id = sesion.query(func.max(Tags.id)).one()[0]
+            last_id = last_id if last_id else 1
+            print('last tag id', last_id)
+        else:
+            last_id = tag.id
+        print('Ths', prj_id, last_id)
+        conn = db_session.create_coon()
+        ins = project_tag_table.insert().values(project_id=prj_id, tag_id=last_id)
+        conn.execute(ins)
+    return
 
 
 def check_project(form):
@@ -25,7 +47,22 @@ def check_project(form):
     return 'OK'
 
 
-@blueprint.route('/register-project', methods=['GET', 'POST'])
+@blueprint.route('/register/check', methods=['GET', 'POST'])
+@login_required
+def check_tags():
+    print('We are there')
+    tags = request.args.get('tags').split(',')
+    print(len(tags))
+    if request.method == 'POST':
+        print('this tag', request.form.keys())
+        wrong = [int(key[6:]) - 1 for key in request.form.keys()]
+        print(wrong)
+        add_tags_to_project(int(request.args.get('id')), [tags[i] for i in range(len(tags)) if i not in wrong])
+        return redirect(url_for('base'))
+    return render_template('check_tags.html', tags=tags)
+
+
+@blueprint.route('/register', methods=['GET', 'POST'])
 @login_required
 def register_project():
     print(current_user.id)
@@ -36,12 +73,16 @@ def register_project():
                            full_description=form.full_description.data,
                            owner_id=current_user.id)
         resp = check_project(form)
+        # checking is all data in form is good
         if resp != 'OK':
             err_attr = getattr(form, resp[0])
             err_attr.errors.append(resp[1])
             return render_template('register_project.html', form=form, title='Register project')
         sesion = db_session.create_session()
+        # getting this project id
         last_id = sesion.query(func.max(Projects.id)).one()
+
+        # saving image for this project
         image = request.files.get('image_field')
         if not last_id[0]:
             last_id = 1
@@ -49,10 +90,10 @@ def register_project():
             last_id = int(last_id[0]) + 1
         if image and image.filename.rsplit('.')[1] in ['png', 'jpg', 'jpeg']:
             filename = f'{current_user.id}_{last_id}.jpg'
-            filename = os.path.join(app.config['UPLOAD_FOLDER'],
-                                    os.path.join('project_imgs', filename))
-            image.save(filename)
-            project.image_path = filename
+            global_file_path = os.path.join(app.config['UPLOAD_FOLDER'],
+                                            os.path.join('project_imgs', filename))
+            image.save(global_file_path)
+            project.image_path = url_for('static', filename=f'imgs/project_imgs/{filename}')
         else:
             project.image_path = url_for('static', filename='imgs/project_imgs/no_project_image.jpg')
         for username in form.collaborators.data.split(', '):
@@ -63,12 +104,15 @@ def register_project():
         sesion.commit()
         sesion.close()
         print('subprocess with last_id:', last_id)
-        subprocess.call(f'python3 analyze_description.py {last_id}', shell=True)
-        return redirect(url_for('base'))
+
+        probable_tags = analyze_description(last_id)
+        # subprocess.call(f'python analyze_description.py {last_id}', shell=True)
+        response = make_response(redirect(url_for('blog.check_tags', id=str(last_id), tags=','.join(probable_tags))))
+        return response
     return render_template('register_project.html', form=form, title='Register project')
 
 
-@blueprint.route('/project/<int:id>', methods=['GET', 'POST'])
+@blueprint.route('/show/<int:id>', methods=['GET', 'POST'])
 def view_project(id):
     project = get_project(id)  # type: Projects
     print()
@@ -88,7 +132,6 @@ def view_project(id):
             print('This ok')
             print(com.text)
             sesion.commit()
-
         info = project.__dict__
         print(info)
         print('Date', project.create_date)
@@ -117,7 +160,7 @@ def add_comment(project, form):
     return None
 
 
-@app.route('/project_delete/<int:id>', methods=['GET', 'POST'])
+@app.route('/delete/<int:id>', methods=['GET', 'POST'])
 @login_required
 def delete_news(id):
     project = get_project(id)
@@ -131,7 +174,7 @@ def delete_news(id):
     return redirect('/')
 
 
-@blueprint.route('/project_edit/<int:id>', methods=['GET', 'POST'])
+@blueprint.route('/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_blog(id):
     form = EditProjectForm()

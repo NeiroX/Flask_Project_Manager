@@ -6,8 +6,8 @@
             <img class="circle-image" align="right" width="200" height="200" src={{ image }}>
             {% if viewer.is_authenticated and viewer.id == owner_id %}
             <div>
-                <a href="/project_edit/{{id}}" class="btn btn-warning">Edit</a>
-                <a href="/project_delete/{{id}}" class="btn btn-danger">Delete</a>
+                <a href="/project/edit/{{id}}" class="btn btn-warning">Edit</a>
+                <a href="/project/delete/{{id}}" class="btn btn-danger">Delete</a>
             </div>
             {% endif %}
         </div>

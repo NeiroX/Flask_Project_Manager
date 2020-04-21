@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<div align="center">
+    <h1>Check those tags that are wrong</h1>
+</div>
+{% if tags|length == 0 %}
+        <div class="alert alert">
+            <p>
+              No tags were found
+            </p>
+            <a href="/" class="btn btn-primary">Continue</a>
+        </div>
+{% else %}
+    <form method="post" action="">
+            {% for tag in tags %}
+                <div class="form-group">
+
+                     <input type="checkbox" class="form-check-input" id="acceptRules" name="accept{{loop.index}}">
+                    <label class="form-check-label" for="acceptRules">{{tag}}</label>
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+{% endif %}
+{% endblock %}

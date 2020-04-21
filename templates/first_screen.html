@@ -1,14 +1,37 @@
 {% extends "base.html" %}
 {% block content %}
     <br>
+    <div align="center">
+        <h1>Popular projects</h1>
+    </div>
     <div class="card-deck">
-        {% for prjct in projects %}
+        {% for prjct in popular_projects %}
             <div class="card">
                 <img alt="Card image cap" class="card-img-top" style= "max-width:400px; max-height:200px !important;" src={{prjct.image_path}} />
                 <div class="card-body">
                     <div class="card-title">{{ prjct.name }}</div>
                     <p class="card-text">{{ prjct.short_description }}</p>
-                    <a href={{'project/%d'| format(prjct.id)}} class="btn btn-primary">Show project</a>
+                    <a href={{'project/show/%d'| format(prjct.id)}} class="btn btn-primary">Show project</a>
+                </div>
+                <div class="card-footer">
+                    <a href="#">{{ prjct.owner.username }}</a>
+                    <small class="text-muted">Created: {{ prjct.create_date.strftime("%Y-%m-%d") }}</small><br>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <hr>
+    <div align="center">
+        <h1>Recommended projects</h1>
+    </div>
+     <div class="card-deck">
+        {% for prjct in recommended_projects %}
+            <div class="card">
+                <img alt="Card image cap" class="card-img-top" style= "max-width:400px; max-height:200px !important;" src={{prjct.image_path}} />
+                <div class="card-body">
+                    <div class="card-title">{{ prjct.name }}</div>
+                    <p class="card-text">{{ prjct.short_description }}</p>
+                    <a href={{'project/show/%d'| format(prjct.id)}} class="btn btn-primary">Show project</a>
                 </div>
                 <div class="card-footer">
                     <a href="#">{{ prjct.owner.username }}</a>

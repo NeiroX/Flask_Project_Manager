@@ -24,15 +24,24 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"></script>
-
     <script type="text/javascript">
         $SCRIPT_ROOT={{request.script_root|tojson|safe}};
+    </script>
+    <script type="text/javascript">
         $(function(){
             $('button.rate-button').bind('click',function(event){
+                window.value=event.target.id;
+                console.log(window.value,"window.value");
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $(function(){
+            $('button.next-button').bind('click',function(event){
                 var req=new XMLHttpRequest();
                 req.overrideMimeType("application/json");
-                console.log(event.target.id,'helo there');
-                req.open('GET',$SCRIPT_ROOT+'/rank-projects/add_rank?pr_id='+$('#pr_id').text()+'&rank='+event.target.id,true);
+                console.log(window.value,'helo there');
+                req.open('GET',$SCRIPT_ROOT+'/rank-projects/add_rank?pr_id='+$('#pr_id').text()+'&rank='+window.value,true);
                 req.send(null);
             });
         });
@@ -56,7 +65,7 @@
         </div>
         {% if current_user.is_authenticated %}
         <div class="btn-group">
-            <a class="btn btn-outline-primary" href="/register-project">New project</a>
+            <a class="btn btn-outline-primary" href="/project/register">New project</a>
             <a class="btn btn-outline-secondary" href="/register">{{current_user.username}}</a>
             <a class="btn btn-outline-danger" href="/logout">Logout</a>
         </div>
