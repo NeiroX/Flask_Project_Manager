@@ -1,24 +1,19 @@
 {% extends "base.html"%}
-{% block content%}
-    <p hidden id="pr_id">{{project['id']}}</p>
-
-<div class="jumbotron p-4 p-md-5 text-dark rounded" xmlns="http://www.w3.org/1999/html">
+{% block content %}
+<p hidden id="pr_id">{{project['id']}}</p>
+<div class="jumbotron p-4 p-md-5 rounded" style="background-color: #2A2A2A">
     <div class="col-md-15 mb-4">
         <div class="view overlay z-depth-1-half">
-            <img class="circle-image" align="right" width="200" id="project_image"  height="200"
-                 src={{project['image_path']}}>
+            <img class="circle-image" align="right" width="200" id="project_image" height="200" src={{project['image_path']}}>
         </div>
     </div>
     <div class="col-md-16 mb-4">
-        <h1 class="display-4" id="project_name">{{project['name']}}</h1>
-        <p>
-        Author:
-        <a href="/user/{{project['owner_username']}}" id="owner_username"><b>{{project['owner_username']}}</b></a><br>
-        </p>
-        <p id="create_date">Date of creation: {{project['create_date']}}</p>
-        <p class="lead" id="short_description">{{project['short_description']}}</p>
-        <hr class="my-4">
-        <p id="full_description">{{project['full_description']}}</p>
+        <h1 class="name-text display-4" id="project_name">{{project['name']}}</h1>
+        <a href="/user/{{project['owner_username']}}" id="owner_username"><b>Author: {{project['owner_username']}}</b></a><br>
+        <p id="create_date" class="created-date-text">Date of creation: {{project['create_date']}}</p>
+        <p class="short-description-text lead " id="short_description">{{project['short_description']}}</p>
+        <hr class="my-4" style="background-color: #d6d6d6;">
+        <p id="full_description" class="full-description-text">{{project['full_description']}}</p>
     </div>
     <hr class="my-4">
     <br>

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="jumbotron p-4 p-md-5 text-dark rounded">
+<div class="jumbotron p-4 p-md-5 rounded">
     <div class="col-md-15 mb-4">
         <div class="view overlay z-depth-1-half">
             <img class="circle-image" align="right" width="200" height="200" src={{ image }}>
@@ -13,21 +13,21 @@
         </div>
     </div>
     <div class="col-md-16 mb-4">
-        <h1 class="display-4">{{name}}</h1>
-        <p>Author: {{author}}</p>
-        <p>Date of creation: {{create_date}}</p>
-        <p class="lead">{{short_description}}</p>
-        <hr class="my-4">
-        <p>{{full_description}}</p>
+        <h1 class="name-text display-4">{{name}}</h1>
+        <a href="/user/{{author}}"><b>Author: {{author}}</b></a><br>
+        <p class="created-date-text">Date of creation: {{create_date}}</p>
+        <p class="lead short-description-text">{{short_description}}</p>
+        <hr class="project-line my-4">
+        <p class="full-description-text">{{full_description}}</p>
     </div>
-    <hr class="my-4">
+    <hr class="project-line my-4">
     <br>
     <form method="post" enctype="multipart/form-data" novalidate>
         {{form.hidden_tag()}}
         {{form.csrf_tocken}}
         <div class="form-group">
-            <label class="lab">{{form.text.label}}</label>
-            {{form.text(class="form-control")}}
+            <label class="forms-label-text lab">{{form.text.label}}</label>
+            {{form.text(class="forms-input form-control")}}
             {% for error in form.text.errors %}
             <p class="alert alert-danger" role="alert">
                 {{ error }}

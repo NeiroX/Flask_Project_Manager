@@ -162,13 +162,19 @@ def add_comment(project, form):
 
 @app.route('/delete/<int:id>', methods=['GET', 'POST'])
 @login_required
-def delete_news(id):
-    project = get_project(id)
-    if project:
-        sesion = db_session.create_session()
+def delete_project(id):
+    sesion = db_session.create_session()
+    project = sesion.query(Projects).get(id)
+    if project and current_user == project.owner or current_user in project.collaborators:
+        img_name = project.image_path
         sesion.delete(project)
         sesion.commit()
-        sesion.close()
+
+        if img_name.split()[-1] != 'no_project_image.jpg':
+            try:
+                os.remove(img_name)
+            except Exception as e:
+                print(e)
     else:
         abort(404)
     return redirect('/')
@@ -179,19 +185,18 @@ def delete_news(id):
 def edit_blog(id):
     form = EditProjectForm()
     if request.method == 'GET':
-        sesion = db_session.create_session()
         project = get_project(id)  # type: Projects
         if project:
             form.name.data = project.name
             form.short_description.data = project.short_description
             form.full_description.data = project.full_description
             form.collaborators.data = 'Only owner now'
-            # form.image_field.data = open(project.image_path)
+            form.image_field.data = project.image_path
         else:
             abort(404)
     if form.validate_on_submit():
         sesion = db_session.create_session()
-        project = get_project(id)  # type: Projects
+        project = sesion.query(Projects).get(id)  # type: Projects
         if project:
             project.name = form.name.data
             project.short_description = form.short_description.data
@@ -215,8 +220,8 @@ def edit_blog(id):
 
             sesion.commit()
             print('commited')
-            subprocess.call(f'python3 analyze_description.py {last_id} --editing', shell=True)
-            return redirect('/')
+            # subprocess.call(f'python3 analyze_description.py {last_id} --editing', shell=True)
+            return redirect(f'/project/{id}')
         else:
             abort(404)
     return render_template('edit_project.html', title='Edit project', form=form)

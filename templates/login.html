@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <div align="center">
-    <h1>Login</h1>
+    <h1 class="name-text">Login</h1>
     {% if message_login %}
         <p class="alert alert-danger" role="alert">
             {{message_login}}
@@ -12,8 +12,8 @@
     {{form.hidden_tag()}}
     {{form.csrf_tocken}}
     <div class="form-group">
-        <label class="lab">{{form.username_email.label}}</label>
-        {{form.username_email(class="form-control")}}
+        <label class="forms-label-text lab">{{form.username_email.label}}</label>
+        {{form.username_email(class="forms-input form-control")}}
         {% for error in form.username_email.errors %}
         <p class="alert alert-danger" role="alert">
             {{ error }}
@@ -21,8 +21,8 @@
         {% endfor %}
     </div>
         <div class="form-group">
-        <label class="lab">{{form.password.label}}</label>
-        {{form.password(class="form-control")}}
+        <label class="forms-label-text lab">{{form.password.label}}</label>
+        {{form.password(class="forms-input form-control")}}
         {% for error in form.password.errors %}
         <p class="alert alert-danger" role="alert">
             {{ error }}
@@ -31,7 +31,7 @@
     </div>
         <div class="form-group">
         {{ form.remember_me() }}
-            {{ form.remember_me.label }}
+            {{ form.remember_me.label(class="forms-label-text") }}
     </div>
     {{ form.submit(type="submit", class="btn btn-primary") }}
 </form>

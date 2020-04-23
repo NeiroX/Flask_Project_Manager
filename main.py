@@ -34,7 +34,7 @@ def base():
     response = make_response(
         render_template('first_screen.html', popular_projects=popular_projects,
                         recommended_projects=recommended_projects,
-                        message=message))
+                        message=message, login=current_user.is_authenticated))
     response.set_cookie('error_message', '1', max_age=0)
     return response
 

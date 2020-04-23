@@ -16,3 +16,79 @@
 .checked {
     color: orange;
 }
+
+.card-setting  {
+    min-width: 16.25rem;
+    max-width: 16.675rem;
+    max-height: 21.875rem;
+    margin-bottom: 1rem !important;
+    margin-right: 1rem !important;
+    margin-left: 0rem !important;
+    background-color: #343a40;
+}
+
+.forms-label-text {
+    color: #E3E3E3;
+}
+
+.forms-input {
+    background-color: #F6F6F6;
+}
+
+.full-description-text {
+    color: #F3F3F3;
+}
+
+.short-description-text {
+    color: #c2cfe0;
+}
+
+.name-text {
+    color: #fff;
+}
+
+.created-date-text {
+    color: #bfbfbf;
+}
+
+.txt-color {
+    color: unset;
+}
+
+.short-description-card-text {
+    font-size: 0.938rem;
+}
+
+.name-card-text {
+    font-size: 1.25rem;
+}
+
+.line {
+    width: 68.3rem;
+    background-color: #d6d6d6;
+}
+
+.deck-setting {
+    padding-left: 1.9rem;
+}
+
+.image-card {
+    max-width: 16.875rem;
+    max-height: 15.625rem;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%
+}
+.project-line {
+    background-color: #d6d6d6;
+}
+
+.jumbotron {
+    background-color: #2A2A2A !important;
+}
+
+body {
+    background-color: #1E1B1B !important;
+}
+
