@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, request, redirect, url_for, abort, session, make_response, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, abort, session, \
+    make_response, jsonify
 from db_session import create_session, create_coon
 from models import ranked_table, Projects
 from flask_login import current_user
@@ -24,7 +25,8 @@ def add_to_already_ranked(id, rank):
             print('Rank for first', rank_int)
             c_prjct.avg_rate = rank_int
         else:
-            c_prjct.avg_rate = (c_prjct.avg_rate * c_prjct.num_rates + rank_int) / (1 + c_prjct.num_rates)
+            c_prjct.avg_rate = (c_prjct.avg_rate * c_prjct.num_rates + rank_int) / (
+                    1 + c_prjct.num_rates)
         c_prjct.num_rates += 1
         sesion.commit()
         return {'response': 200}
@@ -42,7 +44,7 @@ def add():
             url = url_for('base')
             return jsonify({'url': url})
         next_project, new_last_id = next_project_ans
-        html_template=render_template('rank_project.html',project=next_project.tojson())
+        html_template = render_template('rank_project.html', project=next_project.tojson())
         return html_template
     return jsonify(ans)
 
@@ -74,10 +76,11 @@ def choose_project():
 
 @blueprint.route('/', methods=['GET', 'POST'])
 def rank_projects():
-    project = choose_project()  # type: Projects,int
+    project = choose_project()  # type: Projects
     if not project:
         response = make_response(redirect(url_for('base')))
-        response.set_cookie('error_message', '<strong>You have already ranked all the projects</strong>', max_age=60)
+        response.set_cookie('error_message',
+                            '<strong>You have already ranked all the projects</strong>', max_age=60)
         return response
     first_project, new_last_id = project
     response = make_response(render_template('rank_project.html', project=first_project.tojson()))

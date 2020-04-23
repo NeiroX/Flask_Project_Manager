@@ -117,7 +117,8 @@ association_comments = sqlalchemy.Table('association_comments', SqlAlchemyBase.m
                                                           sqlalchemy.ForeignKey('comments.id')))
 
 ranked_table = sqlalchemy.Table('ranked_table', SqlAlchemyBase.metadata,
-                                sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True, autoincrement=True),
+                                sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True,
+                                                  autoincrement=True),
                                 sqlalchemy.Column('project_id', sqlalchemy.Integer),
                                 sqlalchemy.Column('user_id', sqlalchemy.Integer),
                                 sqlalchemy.Column('rank', sqlalchemy.Integer))

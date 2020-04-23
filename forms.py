@@ -30,7 +30,8 @@ class ProjectForm(FlaskForm):
     name = StringField('* Project name', validators=[DataRequired()])
     image_field = FileField('Project image')
     short_description = TextAreaField('* Short description', validators=[DataRequired()])
-    full_description = TextAreaField('Full description',render_kw={'class':'form-control','rows':20})
+    full_description = TextAreaField('Full description',
+                                     render_kw={'class': 'form-control', 'rows': 20})
     collaborators = StringField(
         'Collaborators')
 

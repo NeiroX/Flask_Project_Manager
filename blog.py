@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, request, redirect, url_for, abort, session, Response, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, abort, session, Response, \
+    jsonify
 from forms import RegisterProjectForm, CommentForm
 from models import Projects, User, Comment, Tags, project_tag_table
 from flask import Blueprint, render_template, request, redirect, make_response, url_for, abort
@@ -57,7 +58,8 @@ def check_tags():
         print('this tag', request.form.keys())
         wrong = [int(key[6:]) - 1 for key in request.form.keys()]
         print(wrong)
-        add_tags_to_project(int(request.args.get('id')), [tags[i] for i in range(len(tags)) if i not in wrong])
+        add_tags_to_project(int(request.args.get('id')),
+                            [tags[i] for i in range(len(tags)) if i not in wrong])
         return redirect(url_for('base'))
     return render_template('check_tags.html', tags=tags)
 
@@ -106,8 +108,9 @@ def register_project():
         print('subprocess with last_id:', last_id)
 
         probable_tags = analyze_description(last_id)
-        # subprocess.call(f'python analyze_description.py {last_id}', shell=True)
-        response = make_response(redirect(url_for('blog.check_tags', id=str(last_id), tags=','.join(probable_tags))))
+        subprocess.call(f'python analyze_description.py {last_id}', shell=True)
+        response = make_response(
+            redirect(url_for('blog.check_tags', id=str(last_id), tags=','.join(probable_tags))))
         return response
     return render_template('register_project.html', form=form, title='Register project')
 
@@ -160,7 +163,7 @@ def add_comment(project, form):
     return None
 
 
-@app.route('/delete/<int:id>', methods=['GET', 'POST'])
+@blueprint.route('/delete/<int:id>', methods=['GET', 'POST'])
 @login_required
 def delete_project(id):
     sesion = db_session.create_session()
@@ -169,7 +172,6 @@ def delete_project(id):
         img_name = project.image_path
         sesion.delete(project)
         sesion.commit()
-
         if img_name.split()[-1] != 'no_project_image.jpg':
             try:
                 os.remove(img_name)
@@ -221,7 +223,7 @@ def edit_blog(id):
             sesion.commit()
             print('commited')
             # subprocess.call(f'python3 analyze_description.py {last_id} --editing', shell=True)
-            return redirect(f'/project/{id}')
+            return redirect(f'/project/show/{id}')
         else:
             abort(404)
     return render_template('edit_project.html', title='Edit project', form=form)
