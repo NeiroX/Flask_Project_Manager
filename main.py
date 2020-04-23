@@ -32,7 +32,8 @@ def base():
     projects = get_popular_projects()
     message = request.cookies.get('error_message')
     response = make_response(
-        render_template('first_screen.html', projects=projects, message=message))
+        render_template('first_screen.html', projects=projects, message=message,
+                        login=current_user.is_authenticated))
     response.set_cookie('error_message', '1', max_age=0)
     return response
 

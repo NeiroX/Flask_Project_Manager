@@ -1,38 +1,25 @@
 {% extends "base.html"%}
 {% block content%}
-<div class="jumbotron p-4 p-md-5 text-dark rounded" xmlns="http://www.w3.org/1999/html">
+<div class="jumbotron p-4 p-md-5 rounded" style="background-color: #2A2A2A">
     <div class="col-md-15 mb-4">
         <div class="view overlay z-depth-1-half">
-            <img class="circle-image" align="right" width="200" height="200"
-                 src={{project['image_path']}}>
+            <img class="circle-image" align="right" width="200" height="200" src={{project['image_path']}}>
         </div>
     </div>
     <div class="col-md-16 mb-4">
-        <h1 class="display-4">{{project['name']}}</h1>
-        <a href="/user/{{project['owner_username']}}"><b>Author:
-            {{project['owner_username']}}</b></a><br>
-
-        <p>Date of creation: {{project['create_date']}}</p>
-        <p class="lead">{{project['short_description']}}</p>
-        <hr class="my-4">
-        <p>{{project['full_description']}}</p>
+        <h1 class="name-text display-4">{{project['name']}}</h1>
+        <a href="/user/{{project['owner_username']}}"><b>Author: {{project['owner_username']}}</b></a><br>
+        <p class="created-date-text">Date of creation: {{project['create_date']}}</p>
+        <p class="short-description-text lead ">{{project['short_description']}}</p>
+        <hr class="my-4" style="background-color: #d6d6d6;">
+        <p class="full-description-text">{{project['full_description']}}</p>
     </div>
-    <hr class="my-4">
+    <hr class="my-4" style="background-color: #d6d6d6;">
     <br>
 </div>
 <div class="container">
     <br>
     <div class="col-md-3 rating row">
-        <input type="radio" name="star" id="stat1"><label for="stat1">
-        </label>
-        <input type="radio" name="star" id="stat2"><label for="stat2">
-        </label>
-        <input type="radio" name="star" id="stat3"><label for="stat3">
-        </label>
-        <input type="radio" name="star" id="stat4"><label for="stat4">
-        </label>
-        <input type="radio" name="star" id="stat5"><label for="stat5">
-        </label>
     </div>
 
 </div>

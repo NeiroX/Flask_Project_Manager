@@ -1,20 +1,33 @@
 {% extends "base.html" %}
 {% block content %}
-    <br>
-    <div class="card-deck row cards-row-setting">
-        {% for prjct in projects %}
-            <div class="card card-setting" style="max-width: 350px; min-width: 320px;">
-                <img alt="Card image cap" class="card-img-top" style= "max-width:350px; max-height:200px !important;" src={{prjct.image_path}} />
-                <div class="card-body">
-                    <div class="card-title">{{ prjct.name }}</div>
-                    <p class="card-text">{{ prjct.short_description }}</p>
-                    <a href={{'project/%d'| format(prjct.id)}} class="btn btn-primary">Show project</a>
-                </div>
-                <div class="card-footer">
-                    <a href="#">{{ prjct.owner.username }}</a>
-                    <small class="text-muted">Created: {{ prjct.create_date.strftime("%Y-%m-%d") }}</small><br>
-                </div>
+    <div class="container mt-4">
+        {% if projects %}
+        <h1 class="name-text">Popular</h1>
+        <hr class="line my-4">
+        <div class="row">
+            <div class="deck-setting card-deck row dark">
+                {% for prjct in projects %}
+                    <div class="card-setting card">
+                        <img alt="Card image cap" class="image-card card-img-top" src={{prjct.image_path}} />
+                        <div class="card-body">
+                            <div class="name-card-text name-text card-title">{{ prjct.name }}</div>
+                            <p class="short-description-card-text short-description-text card-text">{{ prjct.short_description }}</p>
+                            <a href={{'project/%d'| format(prjct.id)}} class="btn btn-warning">Show project</a>
+                        </div>
+                        <div class="card-footer">
+                            <a href="#">{{ prjct.owner.username }}</a>
+                            <small class="text-muted">Created: {{ prjct.create_date.strftime("%Y-%m-%d") }}</small><br>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
-        {% endfor %}
+        </div>
+        {% if login %}
+            <hr class="line my-4">
+            <h1 class="name-text">Recommended</h1>
+            <hr class="line my-4">
+            <div class="card-deck row dark"></div>
+        {% endif %}
     </div>
+    {% endif %}
 {% endblock %}

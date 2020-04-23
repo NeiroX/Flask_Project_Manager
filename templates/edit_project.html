@@ -2,15 +2,15 @@
 {% block content %}
 <div align="center">
     <br>
-    <h1>Edit project</h1>
+    <h1 class="name-text">Edit project</h1>
 </div>
 <form method="post" enctype="multipart/form-data" action="" novalidate>
     {{form.hidden_tag()}}
     {{form.csrf_tocken}}
     <div class="row">
         <div class="col">
-            <label class="lab">{{form.name.label}}</label>
-            {{form.name(class="form-control")}}
+            <label class="forms-label-text lab">{{form.name.label}}</label>
+            {{form.name(class="forms-input form-control")}}
             {% for error in form.full_description.errors %}
             <p class="alert alert-danger" role="alert">
                 {{ error }}
@@ -19,8 +19,8 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="lab">{{form.short_description.label}}</label>
-        {{form.short_description(class="form-control")}}
+        <label class="forms-label-text lab">{{form.short_description.label}}</label>
+        {{form.short_description(class="forms-input form-control")}}
         {% for error in form.short_description.errors %}
         <p class="alert alert-danger" role="alert">
             {{ error }}
@@ -28,8 +28,8 @@
         {% endfor %}
     </div>
     <div class="form-group">
-        <label class="lab">{{form.full_description.label}}</label>
-        {{form.full_description(class="form-control")}}
+        <label class="forms-label-text lab">{{form.full_description.label}}</label>
+        {{form.full_description(class="forms-input form-control")}}
         {% for error in form.full_description.errors %}
         <p class="alert alert-danger" role="alert">
             {{ error }}
@@ -37,7 +37,7 @@
         {% endfor %}
     </div>
     <div class="form-group">
-        <label class="lab">{{form.collaborators.label}}
+        <label class="forms-label-text lab">{{form.collaborators.label}}
             <small class="form-text text-muted">add usernames using @;<br>
                 example: @username1,
                 @username2
@@ -52,8 +52,8 @@
         {% endfor %}
     </div>
     <div class="form-group">
-        <label class="lab">{{form.image_field.label}}</label>
-        {{form.image_field(class="form-control")}}
+        <label class="forms-label-text lab">{{form.image_field.label}}</label>
+        {{form.image_field(class="forms-input form-control")}}
 
     </div>
     {{ form.submit(type="submit", class="btn btn-primary") }}
