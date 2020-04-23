@@ -30,8 +30,7 @@
     <script type="text/javascript">
         $(function(){
             $('button.rate-button').bind('click',function(event){
-                window.value=event.target.id;
-                console.log(window.value,"window.value");
+                window.value=event.currentTarget.id;
             });
         });
     </script>
@@ -40,9 +39,16 @@
             $('button.next-button').bind('click',function(event){
                 var req=new XMLHttpRequest();
                 req.overrideMimeType("application/json");
-                console.log(window.value,'helo there');
                 req.open('GET',$SCRIPT_ROOT+'/rank-projects/add_rank?pr_id='+$('#pr_id').text()+'&rank='+window.value,true);
-                req.send(null);
+                req.onload=function(){
+                    try{
+                        url=JSON.parse(req.responseText);
+                    }catch(err){
+                        document.write(req.responseText);
+                        window.location.reload()
+                    }
+                };
+                req.send();
             });
         });
     </script>

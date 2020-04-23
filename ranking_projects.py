@@ -16,8 +16,16 @@ def add_to_already_ranked(id, rank):
         c_prjct = sesion.query(Projects).get(id)
         if not c_prjct:
             return {'response': 404}
-        rts = getattr(c_prjct, f'rates_{rank[-1]}')
-        setattr(c_prjct, f'rates_{rank[-1]}', int(rts) + 1)
+        rank_int = int(rank[-1])
+        print('rank int', rank_int)
+        rts = getattr(c_prjct, f'rates_{rank_int}')
+        setattr(c_prjct, f'rates_{rank_int}', int(rts) + 1)
+        if c_prjct.avg_rate == 0:
+            print('Rank for first', rank_int)
+            c_prjct.avg_rate = rank_int
+        else:
+            c_prjct.avg_rate = (c_prjct.avg_rate * c_prjct.num_rates + rank_int) / (1 + c_prjct.num_rates)
+        c_prjct.num_rates += 1
         sesion.commit()
         return {'response': 200}
     return {'response': 403}
@@ -29,12 +37,15 @@ def add():
     print(request.args.get('pr_id'), request.args.get('rank'))
     ans = add_to_already_ranked(int(request.args.get('pr_id')), request.args.get('rank'))
     if ans['response'] == 200:
-        next_project, new_last_id = choose_project()
-        response = make_response(render_template('rank_project.html', project=next_project.tojson()))
-        response.set_cookie('last_project_id', str(new_last_id))
-        return response
-        # return jsonify(next_project.tojson())
+        next_project_ans = choose_project()
+        if not next_project_ans:
+            url = url_for('base')
+            return jsonify({'url': url})
+        next_project, new_last_id = next_project_ans
+        html_template=render_template('rank_project.html',project=next_project.tojson())
+        return html_template
     return jsonify(ans)
+
 
 def choose_project():
     '''this function is for returning single project to be displayed as a rated one'''

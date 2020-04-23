@@ -14,12 +14,20 @@ from sqlalchemy.orm import lazyload, subqueryload
 
 def get_popular_projects():
     sesion = db_session.create_session()
-    return sesion.query(Projects).options(subqueryload(Projects.owner)).limit(5).all()
+    projects = sesion.query(Projects). \
+        options(subqueryload(Projects.owner)). \
+        order_by(Projects.avg_rate.desc()). \
+        limit(5). \
+        all()
+    return projects
 
 
-def get_recommended_projects():
+def get_recommended_projects(num=5):
     sesion = db_session.create_session()
-    return sesion.query(Projects).options(subqueryload(Projects.owner)).limit(5).all()
+    return sesion.query(Projects). \
+        options(subqueryload(Projects.owner)). \
+        limit(num). \
+        all()
 
 
 def resize_image(img_url, w, h):
