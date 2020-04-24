@@ -1,17 +1,19 @@
-from flask import Flask, render_template, request, make_response, abort, url_for, redirect, jsonify
-from forms import RegisterForm
+from flask import Flask, render_template, request, make_response, url_for, redirect, jsonify
 from flask_login import LoginManager, current_user
-from models import User, Projects
-from werkzeug.utils import secure_filename
+from models import User
 import os
 import authen
 import errors
 import blog
 import db_session
 import ranking_projects
-from useful_functions import get_popular_projects, resize_image, get_recommended_projects
+import _thread
+from useful_functions import (get_popular_projects,
+                              get_recommended_projects,
+                              write_new_likes)
 import datetime
 import schedule
+import threading
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'flask_project_key'
@@ -64,9 +66,17 @@ def before_req():
     print(current_user.is_authenticated)
 
 
+def schedule_thread():
+    schedule.every().day.do(write_new_likes)
+    while True:
+        schedule.run_pending()
+        print('a')
+
+
 if __name__ == '__main__':
     db_session.global_init("db.sqlite")
-    
+
+    th=threading.Thread(target=schedule_thread)
     app.register_blueprint(authen.blueprint)
     app.register_blueprint(errors.blueprint)
     app.register_blueprint(blog.blueprint, url_prefix='/project')

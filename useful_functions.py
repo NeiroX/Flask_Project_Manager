@@ -9,7 +9,10 @@ import errors
 import blog
 from PIL import Image
 import db_session
+import datetime
+from models import likes_in_day_table
 from sqlalchemy.orm import lazyload, subqueryload
+from sqlalchemy import insert
 
 
 def get_popular_projects():
@@ -45,6 +48,19 @@ from models import Projects
 from flask import abort
 from PIL import Image
 import os
+
+
+def write_new_likes():
+    current_date = datetime.date.today()
+    sesion = db_session.create_session()
+    conn = db_session.create_coon()
+    for project in sesion.query(Projects).all():
+        values = {'rates_' + str(i): getattr(project, 'rates_' + str(i)) for i in range(1, 6)}
+        print('values', values)
+        values.update({'project_id': project.id, 'date': current_date})
+        ins = likes_in_day_table.insert().values(**values)
+        conn.execute(ins)
+    conn.close()
 
 
 def get_project(id):
