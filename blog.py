@@ -5,7 +5,7 @@ from models import Projects, User, Comment, Tags, project_tag_table
 from flask import Blueprint, render_template, request, redirect, make_response, url_for, abort
 from sqlalchemy import func
 from forms import RegisterProjectForm, EditProjectForm
-from models import Projects, User
+from models import Projects, User, association_comments
 import db_session
 import datetime
 from main import app, handle_unauth
@@ -43,8 +43,8 @@ def add_tags_to_project(prj_id, tags):
 
 
 def check_project(form):
-    if (len(form.short_description.data) >= 150):
-        return ('short_description', 'Length of short description should be less than 150')
+    if len(form.short_description.data) >= 150:
+        return 'short_description', 'Length of short description should be less than 150'
     return 'OK'
 
 
@@ -118,7 +118,6 @@ def register_project():
 @blueprint.route('/show/<int:id>', methods=['GET', 'POST'])
 def view_project(id):
     project = get_project(id)  # type: Projects
-    print()
     if project:
         form = CommentForm()
         if request.method == 'POST' and current_user.is_anonymous:
@@ -129,30 +128,39 @@ def view_project(id):
             sesion = db_session.create_session()
             com = sesion.query(Comment).filter(
                 Comment.id == sesion.query(func.max(Comment.id))).first()
+            print(com.__dict__)
             project.comments.append(com)
             if not session.get('already_seen', False):
                 project.views += 1
             print('This ok')
             print(com.text)
             sesion.commit()
+            return redirect(f'/project/show/{id}')
         info = project.__dict__
+        sesion = db_session.create_session()
+        comments_prev_list = sesion.query(Comment).filter_by(project_id=id).all()
+        comments = [(sesion.query(User).filter_by(id=comment.creator_id).first(), comment) for
+                    comment in
+                    comments_prev_list] if comments_prev_list else []
+        sesion.close()
         print(info)
         print('Date', project.create_date)
         info['create_date'] = info['create_date'].ctime()
         return render_template('blog_view.html', title=project.name,
                                image=project.image_path,
                                form=form,
-                               author=project.owner.username, viewer=current_user, **info)
+                               author=project.owner.username, viewer=current_user,
+                               comments_list=comments, **info)
     else:
         abort(404)
 
 
 @login_required
 def add_comment(project, form):
-    if request.method == 'POST' and form.validate_on_submit():
+    if request.method == 'POST' and form.validate_on_submit() and form.text.data:
         if current_user.is_anonymous:
-            return None
-        comment = Comment(text=form.text.data,
+            return redirect('/project')
+        comment = Comment(text=form.text.data.strip(),
                           creator_id=current_user.id,
                           project_id=project.id)
         sesion = db_session.create_session()

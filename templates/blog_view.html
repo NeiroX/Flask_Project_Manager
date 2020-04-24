@@ -35,6 +35,27 @@
             {% endfor %}
         </div>
         {{ form.submit(type="submit", class="btn btn-info") }}
-    </form>
+    </form><br>
+    {% if comments_list.__len__() != 0 %}
+        <h3 class="forms-label-text">{{comments_list.__len__()}} comments</h3>
+        <hr class="project-line my-4">
+        <section id="comments" class="content-item">
+            <div class="container">
+                <ul class="list-unstyled">
+                    {% for user, comment in comments_list %}
+                    <li class="media">
+                        <img src="{{url_for('static', filename='imgs/system_imgs/user_image.png')}}"
+                             class="user-image mr-3" alt="User">
+                        <div class="media-body">
+                            <a href="/user/{{user.username}}"><h4 class="comment-name mt-0 mb-1">{{user.username}}</h4></a>
+                            <p class="comment-text">{{comment.text}}</p>
+                        </div>
+                    </li>
+                    <br>
+                    {% endfor %}
+                </ul>
+            </div>
+        </section>
+    {% endif %}
 </div>
 {% endblock %}

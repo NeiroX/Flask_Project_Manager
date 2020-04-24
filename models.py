@@ -97,7 +97,6 @@ class Comment(SqlAlchemyBase):
     project_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('projects.id'))
     likes = sqlalchemy.Column(sqlalchemy.Integer, default=0)
 
-
 class Tags(SqlAlchemyBase):
     __tablename__ = 'tags'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
