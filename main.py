@@ -11,6 +11,7 @@ import db_session
 import ranking_projects
 from useful_functions import get_popular_projects, resize_image, get_recommended_projects
 import datetime
+import schedule
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'flask_project_key'
@@ -65,6 +66,7 @@ def before_req():
 
 if __name__ == '__main__':
     db_session.global_init("db.sqlite")
+    
     app.register_blueprint(authen.blueprint)
     app.register_blueprint(errors.blueprint)
     app.register_blueprint(blog.blueprint, url_prefix='/project')

@@ -4,6 +4,7 @@ from db_session import create_session, create_coon
 from models import ranked_table, Projects
 from flask_login import current_user
 from sqlalchemy import insert
+import schedule
 
 blueprint = Blueprint('ranking_projects', __name__, template_folder='templates')
 
