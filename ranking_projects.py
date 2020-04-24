@@ -62,7 +62,7 @@ def choose_project():
         else:
             last_prjct_id = 1
     else:
-        '''TODO: Either use knn algorithm for finding best project. or just iterate through user interests'''
+        '''TODO: Either use knn algorithm for finding best project or just iterate through user interests'''
         '''Now just returns the same thing as unauthorized'''
         last_prjct_id = request.cookies.get('last_project_id', None)
         if last_prjct_id:
