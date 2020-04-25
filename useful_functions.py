@@ -1,18 +1,27 @@
-from flask import Flask, render_template, request, make_response, abort, url_for, redirect
-from forms import RegisterForm
-from flask_login import LoginManager, current_user
-from models import User, Projects
-from werkzeug.utils import secure_filename
-import os
-import authen
-import errors
-import blog
-from PIL import Image
-import db_session
 import datetime
 from models import likes_in_day_table
-from sqlalchemy.orm import lazyload, subqueryload
-from sqlalchemy import insert
+import db_session
+from models import Projects
+from flask import abort
+from PIL import Image, ImageDraw
+import os
+from sqlalchemy.orm import subqueryload
+import matplotlib.pyplot as plt
+import numpy
+
+
+def plot_avg_likes(likes, dates):
+    fig = plt.figure()
+    plot = fig.add_subplot(111)
+    x = dates
+    y = likes
+    plot.plot(x, y)
+    fig.canvas.draw()
+    w, h = fig.canvas.get_width_height()
+    numpy_img_arr = numpy.frombuffer(fig.canvas.tostring_rgb(), dtype=numpy.uint8).reshape(h, w, 3)
+    img = Image.fromarray(numpy_img_arr)
+    print(img.size)
+    img.save('from_numpy.png')
 
 
 def get_popular_projects():
@@ -41,13 +50,6 @@ def resize_image(img_url, w, h):
         return 'OK'
     except Exception as e:
         return e
-
-
-import db_session
-from models import Projects
-from flask import abort
-from PIL import Image
-import os
 
 
 def write_new_likes():
@@ -86,3 +88,5 @@ def resize_image(image_name, w, h):
         return 'OK'
     except Exception as e:
         return e
+
+
