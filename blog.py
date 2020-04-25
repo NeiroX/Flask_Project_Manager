@@ -129,20 +129,20 @@ def view_project(id):
             com = sesion.query(Comment).filter(
                 Comment.id == sesion.query(func.max(Comment.id))).first()
             print(com.__dict__)
+            sesion.close()
             project.comments.append(com)
             if not session.get('already_seen', False):
                 project.views += 1
             print('This ok')
             print(com.text)
-            sesion.commit()
-            return redirect(f'/project/show/{id}')
+            form.text.data = ''
+            # return redirect(f'/project/show/{id}')
         info = project.__dict__
         sesion = db_session.create_session()
         comments_prev_list = sesion.query(Comment).filter_by(project_id=id).all()
         comments = [(sesion.query(User).filter_by(id=comment.creator_id).first(), comment) for
                     comment in
                     comments_prev_list] if comments_prev_list else []
-        sesion.close()
         print(info)
         print('Date', project.create_date)
         info['create_date'] = info['create_date'].ctime()
@@ -157,9 +157,9 @@ def view_project(id):
 
 @login_required
 def add_comment(project, form):
-    if request.method == 'POST' and form.validate_on_submit() and form.text.data:
+    if request.method == 'POST' and form.validate_on_submit():
         if current_user.is_anonymous:
-            return redirect('/project')
+            return redirect(f'/project/show/{project.id}')
         comment = Comment(text=form.text.data.strip(),
                           creator_id=current_user.id,
                           project_id=project.id)
@@ -225,8 +225,7 @@ def edit_blog(id):
                 project.image_path = url_for('static',
                                              filename=f'imgs/project_imgs/{current_user.id}_{res + 1}.jpg')
             else:
-                project.image_path = url_for('static',
-                                             filename='imgs/project_imgs/no_project_image.jpg')
+                pass
 
             sesion.commit()
             print('commited')

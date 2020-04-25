@@ -29,8 +29,6 @@ def load_user(user_id):
 
 @app.route('/')
 def base():
-    sesion = db_session.create_session()
-    sesion.close_all()
     popular_projects = get_popular_projects()
     recommended_projects = get_recommended_projects()
     message = request.cookies.get('error_message')
