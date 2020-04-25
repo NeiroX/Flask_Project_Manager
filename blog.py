@@ -14,7 +14,6 @@ from werkzeug.utils import secure_filename
 import requests
 import os
 import subprocess
-from flask_login import current_user
 from useful_functions import get_project, resize_image
 from analyze_description import analyze_description
 
@@ -46,6 +45,17 @@ def check_project(form):
     if len(form.short_description.data) >= 150:
         return 'short_description', 'Length of short description should be less than 150'
     return 'OK'
+
+
+def delete_project(sesion, project):
+    img_name = project.image_path
+    sesion.delete(project)
+    sesion.commit()
+    if img_name.split()[-1] != 'no_project_image.jpg':
+        try:
+            os.remove(img_name)
+        except Exception as e:
+            print(e)
 
 
 @blueprint.route('/register/check', methods=['GET', 'POST'])
@@ -133,14 +143,14 @@ def view_project(id):
             project.comments.append(com)
             if not session.get('already_seen', False):
                 project.views += 1
-            print('This ok')
+            print('Comment ok')
             print(com.text)
             form.text.data = ''
             # return redirect(f'/project/show/{id}')
         info = project.__dict__
         sesion = db_session.create_session()
         comments_prev_list = sesion.query(Comment).filter_by(project_id=id).all()
-        comments = [(sesion.query(User).filter_by(id=comment.creator_id).first(), comment) for
+        comments = [(sesion.query(User).get(comment.creator_id), comment) for
                     comment in
                     comments_prev_list] if comments_prev_list else []
         print(info)
@@ -177,14 +187,7 @@ def delete_project(id):
     sesion = db_session.create_session()
     project = sesion.query(Projects).get(id)
     if project and current_user == project.owner or current_user in project.collaborators:
-        img_name = project.image_path
-        sesion.delete(project)
-        sesion.commit()
-        if img_name.split()[-1] != 'no_project_image.jpg':
-            try:
-                os.remove(img_name)
-            except Exception as e:
-                print(e)
+        delete_project(sesion, project)
     else:
         abort(404)
     return redirect('/')

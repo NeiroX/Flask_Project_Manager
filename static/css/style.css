@@ -101,6 +101,15 @@
     height: 5rem;
 }
 
+.profile-nav {
+    background-color: #434343; !important
+}
+
+.profile-nav-text {
+    color: #F0F0F0; !important
+    font-size: 4rem; !important
+}
+
 body {
     background-color: #1E1B1B !important;
 }

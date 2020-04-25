@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename
 import os
 import authen
 import errors
+import user_profile
 import blog
 import db_session
 import ranking_projects
@@ -33,7 +34,7 @@ def base():
     recommended_projects = get_recommended_projects()
     message = request.cookies.get('error_message')
     response = make_response(
-        render_template('first_screen.html', popular_projects=popular_projects,
+        render_template('first_screen.html', title='Home', popular_projects=popular_projects,
                         recommended_projects=recommended_projects,
                         message=message, login=current_user.is_authenticated))
     response.set_cookie('error_message', '1', max_age=0)
@@ -46,9 +47,9 @@ def like():
     return jsonify({'status': 'OK'})
 
 
-@app.route('/user/<username>')
-def get_user(username):
-    return render_template('profile.html')
+# @app.route('/user/<username>')
+# def get_user(username):
+#     return render_template('user_profile.html')
 
 
 @login_manager.unauthorized_handler
@@ -66,9 +67,10 @@ def before_req():
 
 if __name__ == '__main__':
     db_session.global_init("db.sqlite")
-    
+
     app.register_blueprint(authen.blueprint)
     app.register_blueprint(errors.blueprint)
     app.register_blueprint(blog.blueprint, url_prefix='/project')
+    app.register_blueprint(user_profile.blueprint, url_prefix='/user')
     app.register_blueprint(ranking_projects.blueprint, url_prefix='/rank-projects')
     app.run(port=8080, host='127.0.0.1')

@@ -72,7 +72,7 @@ def choose_project():
     project = sesion.query(Projects).get(last_prjct_id)
     if not project:
         return None
-    return (project, last_prjct_id)
+    return project, last_prjct_id
 
 
 @blueprint.route('/', methods=['GET', 'POST'])
