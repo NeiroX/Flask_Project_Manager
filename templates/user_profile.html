@@ -1,16 +1,40 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container">
+<tr class="container">
     <h1 class="name-text">{{user.username}}</h1>
-    <img class="circle-image" align="right" width="200" height="200"
-                         src="{{url_for('static', filename='imgs/system_imgs/user_image.png')}}">
     {% if viewer.is_authenticated and viewer.id == user.id %}
-                    <div>
-                        <a href="/user/edit/{{user.username}}" class="btn btn-warning">Edit</a>
-                        <a href="/user/delete/{{user.username}}" class="btn btn-danger">Delete profile</a>
+    <div>
+        <a href="/user/edit/{{user.username}}" class="btn btn-warning">Edit</a>
+        <a href=# class="btn btn-danger" data-toggle="modal" data-target="#staticBackdrop">Delete
+            profile</a>
+
+        <div class="modal fade dark" id="staticBackdrop" data-backdrop="static" tabindex="-1"
+             role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">Are you sure you want to
+                            delete your account?</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
+                    <div class="modal-body">
+                        If you delete the account, then you will not be able to return it.
+                        All your projects will also be deleted and will be refundable.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
+                        </button>
+                        <a href="/user/delete/{{user.username}}" class="btn btn-danger">Yes, I'm
+                            sure</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     {% endif %}
-    <ul class="profile-nav nav justify-content-center dark">
+    <ul class="profile-nav nav justify-content-center">
         <li class="nav-item">
             <a class="profile-nav-text nav-link active" href="/user/{{user.username}}">Info</a>
         </li>
@@ -18,47 +42,77 @@
             <a class="profile-nav-text nav-link active" href="/user/projects/{{user.username}}">Projects</a>
         </li>
         <li class="nav-item">
-            <a class="profile-nav-text nav-link" href="/user/statistic/{{user.username}}">Statistic</a>
+            <a class="profile-nav-text nav-link"
+               href="/user/statistic/{{user.username}}">Statistic</a>
         </li>
     </ul>
     {% if nav_status == 'info' %}
-        <div class="jumbotron p-4 p-md-5 rounded">
-            <div class="col-md-15 mb-4">
-                <div class="view overlay z-depth-1-half">
-                </div>
-            </div>
-            <div class="col-md-16 mb-4">
-                <h1 class="name-text display-4">{{user.username}}</h1>
-                <p class="lead short-description-text">{{user.name}} {{user.surname}}</p>
-                <p class="lead short-description-text">{{user.country}}, {{user.age}}</p>
+    <div class="jumbotron p-4 p-md-5 rounded">
+        <div class="col-md-15 mb-4">
+            <div class="view overlay z-depth-1-half">
+                <img class="circle-image" align="right" width="200" height="200"
+                     src="{{url_for('static', filename='imgs/system_imgs/user_image.png')}}">
             </div>
         </div>
+        <div class="col-md-16 mb-4">
+            <h1 class="name-text display-4">{{user.username}}</h1>
+            <p class="lead short-description-text">{{user.name}} {{user.surname}}</p>
+            <p class="lead short-description-text">{{user.country}}, {{user.age}}</p>
+            <hr class="project-line my-4">
+            <p class="lear full-description-text">{{user.description}}</p>
+        </div>
+    </div>
     {% elif nav_status == 'projects' %}
-        {% if projects%}
-            <br>
-            <h1 class="name-text">{{user.username}}'s projects</h1>
-            <hr class="line my-3">
-            <div class="row">
-                <div class="deck-setting card-deck row dark">
-                    {% for prjct in projects %}
-                        <div class="card-setting card">
-                            <img alt="Card image cap" class="image-card card-img-top" src={{prjct.image_path}} />
-                            <div class="card-body">
-                                <div class="name-card-text name-text card-title">{{ prjct.name }}</div>
-                                <p class="short-description-card-text short-description-text card-text">{{ prjct.short_description }}</p>
-                                <a href={{'project/show/%d'| format(prjct.id)}} class="btn btn-warning">Show project</a>
-                            </div>
-                            <div class="card-footer">
-                                <a href="#">{{ prjct.owner.username }}</a>
-                                <small class="text-muted">Created: {{ prjct.create_date.strftime("%Y-%m-%d") }}</small><br>
-                            </div>
-                        </div>
-                    {% endfor %}
+    {% if projects%}
+    <br>
+    <h1 class="name-text">{{user.username}}'s projects</h1>
+    <hr class="line my-3">
+    <div class="row">
+        <div class="deck-setting card-deck row dark">
+            {% for prjct in projects %}
+            <div class="card-setting card">
+                <img alt="Card image cap" class="image-card card-img-top" src={{prjct.image_path}}/>
+                <div class="card-body">
+                    <div class="name-card-text name-text card-title">{{ prjct.name }}</div>
+                    <p class="short-description-card-text short-description-text card-text">{{
+                        prjct.short_description }}</p>
+                    <a href="/project/show/{{prjct.id}}" class="btn btn-warning">Show
+                        project</a>
+                </div>
+                <div class="card-footer">
+                    <a href="/user/{{prjct.owner.username}}">{{ prjct.owner.username }}</a>
+                    <small class="text-muted">Created: {{ prjct.create_date.strftime("%Y-%m-%d") }}
+                    </small>
+                    <br>
                 </div>
             </div>
-        {% endif %}
-    {% elif nav_status == 'statistic' %}
-
+            {% endfor %}
+        </div>
+    </div>
     {% endif %}
-</div>
-{% endblock %}
+    {% elif nav_status == 'statistic' %}
+    <table cellspacing="100" align="center">
+        <tr>
+            <td><h2 class="stats-title">Number of projects</h2></td>
+            <td></td>
+            <td><h2 class="stats-title">Total comments</h2></td>
+        </tr>
+        <tr>
+            <td><h3 class="stats-info">{{stats['number_of_projects']}}</h3></td>
+            <td></td>
+            <td><h3 class="stats-info">{{stats['total_comments']}}</h3></td>
+        </tr>
+        <tr>
+            <th><h2 class="stats-title">Total rates</h2></th>
+            <th></th>
+            <th><h2 class="stats-title">Average rating</h2></th>
+        </tr>
+        <tr>
+            <th><h3 class="stats-info">{{stats['total_rates']}}</h3></th>
+            <th></th>
+            <th><h3 class="stats-info">{{stats['average_rating']}}</h3></th>
+        </tr>
+    </table>
+    {% endif %}
+    </div>
+    {% endblock %}

@@ -16,6 +16,7 @@ class User(SqlAlchemyBase, UserMixin):
     username = sqlalchemy.Column(sqlalchemy.String, unique=True)
     email = sqlalchemy.Column(sqlalchemy.String, unique=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    description = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     country = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     age = sqlalchemy.Column(sqlalchemy.Integer)
     register_date = sqlalchemy.Column(sqlalchemy.DateTime)
@@ -96,6 +97,7 @@ class Comment(SqlAlchemyBase):
     create_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now())
     project_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('projects.id'))
     likes = sqlalchemy.Column(sqlalchemy.Integer, default=0)
+
 
 class Tags(SqlAlchemyBase):
     __tablename__ = 'tags'

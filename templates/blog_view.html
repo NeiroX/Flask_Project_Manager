@@ -7,7 +7,32 @@
             {% if viewer.is_authenticated and viewer.id == owner_id %}
             <div>
                 <a href="/project/edit/{{id}}" class="btn btn-warning">Edit</a>
-                <a href="/project/delete/{{id}}" class="btn btn-danger">Delete</a>
+                <a href=# class="btn btn-danger" data-toggle="modal" data-target="#staticBackdrop">Delete project</a>
+
+                <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1"
+                     role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="staticBackdropLabel">Are you sure you want to delete the project?</h5>
+                                <button type="button" class="close" data-dismiss="modal"
+                                        aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                If you delete a project, you can never restore it and all data on it will be lost.
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                    Close
+                                </button>
+                                <a href="/project/delete/{{id}}" class="btn btn-danger">Yes, I'm sure</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
             {% endif %}
         </div>
@@ -16,6 +41,9 @@
         <h1 class="name-text display-4">{{name}}</h1>
         <a href="/user/{{author}}"><b>Author: {{author}}</b></a><br>
         <p class="created-date-text">Date of creation: {{create_date}}</p>
+        {% if edit_date %}
+            <p class="created-date-text">Date of last modified: {{edit_date}}</p>
+        {% endif %}
         <p class="lead short-description-text">{{short_description}}</p>
         <hr class="project-line my-4">
         <p class="full-description-text">{{full_description}}</p>
@@ -35,27 +63,29 @@
             {% endfor %}
         </div>
         {{ form.submit(type="submit", class="btn btn-info") }}
-    </form><br>
+    </form>
+    <br>
     {% if comments_list.__len__() != 0 %}
-        <h3 class="forms-label-text">{{comments_list.__len__()}} comments</h3>
-        <hr class="project-line my-4">
-        <section id="comments" class="content-item">
-            <div class="container">
-                <ul class="list-unstyled">
-                    {% for user, comment in comments_list %}
-                    <li class="media">
-                        <img src="{{url_for('static', filename='imgs/system_imgs/user_image.png')}}"
-                             class="user-image mr-3" alt="User">
-                        <div class="media-body">
-                            <a href="/user/{{user.username}}"><h4 class="comment-name mt-0 mb-1">{{user.username}}</h4></a>
-                            <p class="comment-text">{{comment.text}}</p>
-                        </div>
-                    </li>
-                    <br>
-                    {% endfor %}
-                </ul>
-            </div>
-        </section>
+    <h3 class="forms-label-text">{{comments_list.__len__()}} comments</h3>
+    <hr class="project-line my-4">
+    <section id="comments" class="content-item">
+        <div class="container">
+            <ul class="list-unstyled">
+                {% for user, comment in comments_list %}
+                <li class="media">
+                    <img src="{{url_for('static', filename='imgs/system_imgs/user_image.png')}}"
+                         class="user-image mr-3" alt="User">
+                    <div class="media-body">
+                        <a href="/user/{{user.username}}"><h4 class="comment-name mt-0 mb-1">
+                            {{user.username}}</h4></a>
+                        <p class="comment-text">{{comment.text}}</p>
+                    </div>
+                </li>
+                <br>
+                {% endfor %}
+            </ul>
+        </div>
+    </section>
     {% endif %}
 </div>
 {% endblock %}

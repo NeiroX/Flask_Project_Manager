@@ -107,7 +107,28 @@
 
 .profile-nav-text {
     color: #F0F0F0; !important
-    font-size: 4rem; !important
+    font-size: 6rem; !important
+}
+
+.stats-title {
+    color: #4CBB5F;
+    text-align: center;
+}
+
+.stats-info {
+    color: #BFBFBF;
+    text-align: center;
+}
+
+.stats-table table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.stats-table > th, td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 0px solid #ddd;
 }
 
 body {

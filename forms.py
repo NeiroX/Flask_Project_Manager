@@ -4,19 +4,28 @@ from wtforms import SelectField, StringField, PasswordField, IntegerField, Submi
 from wtforms.validators import DataRequired, Email, EqualTo
 
 
-class RegisterForm(FlaskForm):
-    name = StringField('Name', validators=[DataRequired()])
-    surname = StringField('Surname', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email(message='Bad email')])
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    password_again = PasswordField('Password again',
+class UserForm(FlaskForm):
+    name = StringField('* Name', validators=[DataRequired()])
+    surname = StringField('* Surname', validators=[DataRequired()])
+    email = StringField('* Email', validators=[DataRequired(), Email(message='Bad email')])
+    username = StringField('* Username', validators=[DataRequired()])
+    description = TextAreaField('Tell us about yourself',
+                                render_kw={'class': 'form-control', 'rows': 10})
+    age = IntegerField('* Age', validators=[DataRequired()])
+
+
+class RegisterUserForm(UserForm):
+    password = PasswordField('* Password', validators=[DataRequired()])
+    password_again = PasswordField('* Password again',
                                    validators=[DataRequired(), EqualTo('password',
                                                                        message='Passwords do not match')])
-    country = SelectField('Country', coerce=str, validators=[DataRequired()])
-    age = IntegerField('Age', validators=[DataRequired()])
+    country = SelectField('* Country', coerce=str, validators=[DataRequired()])
     remember_me = BooleanField('Remember me', default=False)
     submit = SubmitField('Register')
+
+
+class EditUserForm(UserForm):
+    submit = SubmitField('Save')
 
 
 class LoginForm(FlaskForm):

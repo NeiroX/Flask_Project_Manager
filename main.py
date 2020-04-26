@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, make_response, abort, url_for, redirect, jsonify
-from forms import RegisterForm
+from forms import RegisterUserForm
 from flask_login import LoginManager, current_user
 from models import User, Projects
 from werkzeug.utils import secure_filename

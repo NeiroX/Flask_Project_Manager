@@ -47,10 +47,14 @@ def check_project(form):
     return 'OK'
 
 
-def delete_project(sesion, project):
-    img_name = project.image_path
-    sesion.delete(project)
-    sesion.commit()
+def get_project_comments(project_id):
+    sesion = db_session.create_session()
+    comments = sesion.query(Comment).filter_by(project_id=project_id).all()
+    sesion.close()
+    return comments
+
+
+def delete_project_image(img_name):
     if img_name.split()[-1] != 'no_project_image.jpg':
         try:
             os.remove(img_name)
@@ -141,21 +145,20 @@ def view_project(id):
             print(com.__dict__)
             sesion.close()
             project.comments.append(com)
-            if not session.get('already_seen', False):
-                project.views += 1
             print('Comment ok')
             print(com.text)
             form.text.data = ''
-            # return redirect(f'/project/show/{id}')
         info = project.__dict__
+        comments_prev_list = get_project_comments(id)
         sesion = db_session.create_session()
-        comments_prev_list = sesion.query(Comment).filter_by(project_id=id).all()
         comments = [(sesion.query(User).get(comment.creator_id), comment) for
                     comment in
                     comments_prev_list] if comments_prev_list else []
         print(info)
         print('Date', project.create_date)
         info['create_date'] = info['create_date'].ctime()
+        if info['edit_date'] is not None:
+            info['edit_date'] = info['edit_date']
         return render_template('blog_view.html', title=project.name,
                                image=project.image_path,
                                form=form,
@@ -184,10 +187,17 @@ def add_comment(project, form):
 @blueprint.route('/delete/<int:id>', methods=['GET', 'POST'])
 @login_required
 def delete_project(id):
-    sesion = db_session.create_session()
-    project = sesion.query(Projects).get(id)
+    project = get_project(id)
     if project and current_user == project.owner or current_user in project.collaborators:
-        delete_project(sesion, project)
+        comments = get_project_comments(project.id)
+        img_name = project.image_path
+        sesion = db_session.create_session()
+        if comments:
+            for comment in comments:
+                sesion.delete(comment)
+        sesion.delete(project)
+        sesion.commit()
+        delete_project_image(img_name)
     else:
         abort(404)
     return redirect('/')
@@ -214,7 +224,7 @@ def edit_blog(id):
             project.name = form.name.data
             project.short_description = form.short_description.data
             project.full_description = form.full_description.data
-
+            project.edit_date = datetime.datetime.now()
             last_id = sesion.query(func.max(Projects.id)).one()
             image = request.files.get('image_field')
             if image and image.filename.rsplit('.')[1] in ['png', 'jpg', 'jpeg']:
@@ -228,7 +238,8 @@ def edit_blog(id):
                 project.image_path = url_for('static',
                                              filename=f'imgs/project_imgs/{current_user.id}_{res + 1}.jpg')
             else:
-                pass
+                project.image_path = url_for('static',
+                                             filename='imgs/project_imgs/no_project_image.jpg')
 
             sesion.commit()
             print('commited')
@@ -236,4 +247,4 @@ def edit_blog(id):
             return redirect(f'/project/show/{id}')
         else:
             abort(404)
-    return render_template('edit_project.html', title='Edit project', form=form)
+    return render_template('edit_project.html', title='Edit project', form=form, id=id)
