@@ -15,7 +15,7 @@
                             <a href={{'project/show/%d'| format(prjct.id)}} class="btn btn-warning">Show project</a>
                         </div>
                         <div class="card-footer">
-                            <a href="#">{{ prjct.owner.username }}</a>
+                            <a href="/user/{{prjct.owner.username}}">{{ prjct.owner.username }}</a>
                             <small class="text-muted">Created: {{ prjct.create_date.strftime("%Y-%m-%d") }}</small><br>
                         </div>
                     </div>
@@ -38,7 +38,7 @@
                                 <a href={{'project/show/%d'| format(prjct.id)}} class="btn btn-warning">Show project</a>
                             </div>
                             <div class="card-footer">
-                                <a href="#">{{ prjct.owner.username }}</a>
+                                <a href="/user/{{prjct.owner.username}}">{{ prjct.owner.username }}</a>
                                 <small class="text-muted">Created: {{ prjct.create_date.strftime("%Y-%m-%d") }}</small><br>
                             </div>
                         </div>

@@ -85,7 +85,7 @@ def choose_project():
     print('This is for', last_prjct_id, project)
     if not project:
         return None
-    return (project, last_prjct_id)
+    return project, last_prjct_id
 
 
 @blueprint.route('/', methods=['GET', 'POST'])

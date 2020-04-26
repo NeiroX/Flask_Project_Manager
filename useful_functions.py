@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, make_response, abort, url_for, redirect
-from forms import RegisterForm
+from forms import RegisterUserForm
 from flask_login import LoginManager, current_user
 from models import User, Projects
 from werkzeug.utils import secure_filename
@@ -50,6 +50,7 @@ import os
 def get_project(id):
     sesion = db_session.create_session()
     object_project = sesion.query(Projects).get(id)
+    sesion.close()
     if object_project:
         return object_project
     abort(404)

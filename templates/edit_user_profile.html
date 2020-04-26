@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <div align="center">
-    <h1 class="name-text">Register</h1>
+    <h1 class="name-text">Editing profile</h1>
 </div>
     <form method="post" action="" novalidate>
     {{form.hidden_tag()}}
@@ -26,24 +26,6 @@
         {% endfor %}
     </div>
     <div class="form-group">
-        <label class="forms-label-text lab">{{form.password.label}}</label>
-        {{form.password(class="forms-input form-control")}}
-        {% for error in form.password.errors %}
-        <p class="alert alert-danger" role="alert">
-            {{ error }}
-        </p>
-        {% endfor %}
-    </div>
-    <div class="form-group">
-        <label class="forms-label-text lab">{{form.password_again.label}}</label>
-        {{form.password_again(class="forms-input form-control")}}
-        {% for error in form.password_again.errors %}
-        <p class="alert alert-danger" role="alert">
-            {{ error }}
-        </p>
-        {% endfor %}
-    </div>
-    <div class="form-group">
         <label class="forms-label-text lab">{{form.email.label}}</label>
         {{form.email(class="forms-input form-control")}}
         {% for error in form.email.errors %}
@@ -62,15 +44,6 @@
         {% endfor %}
     </div>
     <div class="form-group">
-        <label class="forms-label-text lab">{{form.country.label}}</label>
-        {{form.country(class="forms-input form-control")}}
-        {% for error in form.country.errors %}
-        <p class="alert alert-danger" role="alert">
-            {{ error }}
-        </p>
-        {% endfor %}
-    </div>
-    <div class="form-group">
         <label class="forms-label-text lab">{{form.age.label}}</label>
         {{form.age(class="forms-input form-control")}}
         {% for error in form.age.errors %}
@@ -79,10 +52,7 @@
         </p>
         {% endfor %}
     </div>
-     <div class="form-group">
-        {{ form.remember_me() }}
-            {{ form.remember_me.label(class="forms-label-text") }}
-    </div>
     {{ form.submit(type="submit", class="btn btn-primary") }}
+    <a type="button" class="btn btn-secondary" href="/user/{{username}}">Cancel</a>
 </form>
 {% endblock %}

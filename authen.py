@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, make_response, url_for
-from forms import RegisterForm, LoginForm
+from forms import RegisterUserForm, LoginForm
 from flask_login import login_user, current_user, logout_user
 from models import User
 import db_session
@@ -21,7 +21,7 @@ def check_user(form):
     return 'OK'
 
 
-def check_new_user(form: RegisterForm):
+def check_new_user(form: RegisterUserForm):
     if len(form.username.data) < 4:
         return ('username', 'Length should be more than 3')
     sesion = db_session.create_session()
@@ -38,10 +38,10 @@ def check_new_user(form: RegisterForm):
 
 @blueprint.route('/register', methods=['GET', 'POST'])
 def register():
-    form = RegisterForm()
+    form = RegisterUserForm()
 
     countries_list = [(country, country) for country in
-                      [line.strip() for line in open('Data/countries.txt').readlines()]]
+                      [line.strip() for line in open('data/countries.txt').readlines()]]
     form.country.choices = countries_list
     pre_register = {'name': 'ME',
                     'surname': 'YOU',
@@ -62,6 +62,7 @@ def register():
                     surname=form.surname.data,
                     username=form.username.data,
                     email=form.email.data,
+                    description=form.description.data,
                     country=form.country.data,
                     age=form.age.data,
                     register_date=datetime.datetime.now())
