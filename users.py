@@ -6,8 +6,6 @@ import db_session
 blueprint = Blueprint('users', __name__, template_folder='templates')
 
 
-@blueprint.route('/show_statstics')
-def show_statistics():
 
 
 @blueprint.route('/<username>')

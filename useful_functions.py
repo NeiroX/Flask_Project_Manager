@@ -24,17 +24,17 @@ def plot_avg_likes(likes, dates):
     img.save('from_numpy.png')
 
 
-def get_popular_projects():
+def get_popular_projects(num=4):
     sesion = db_session.create_session()
     projects = sesion.query(Projects). \
         options(subqueryload(Projects.owner)). \
         order_by(Projects.avg_rate.desc()). \
-        limit(5). \
+        limit(num). \
         all()
     return projects
 
 
-def get_recommended_projects(num=5):
+def get_recommended_projects(num=4):
     sesion = db_session.create_session()
     return sesion.query(Projects). \
         options(subqueryload(Projects.owner)). \
@@ -88,5 +88,3 @@ def resize_image(image_name, w, h):
         return 'OK'
     except Exception as e:
         return e
-
-

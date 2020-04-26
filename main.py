@@ -1,22 +1,20 @@
-from flask import Flask, render_template, request, make_response, url_for, redirect, jsonify
+from flask import Flask, render_template, request, make_response, abort, url_for, redirect, jsonify
+from forms import RegisterForm
 from flask_login import LoginManager, current_user
-from models import User
+from models import User, Projects
+from werkzeug.utils import secure_filename
 import os
 import authen
 import errors
+import user_profile
 import blog
 import db_session
 import ranking_projects
-import users
-import _thread
-from time import sleep
-import logging
-from useful_functions import (get_popular_projects,
-                              get_recommended_projects,
-                              write_new_likes)
+from useful_functions import get_popular_projects, resize_image, get_recommended_projects, write_new_likes
 import datetime
 import schedule
 import threading
+import logging
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'flask_project_key'
@@ -41,7 +39,7 @@ def base():
     recommended_projects = get_recommended_projects()
     message = request.cookies.get('error_message')
     response = make_response(
-        render_template('first_screen.html', popular_projects=popular_projects,
+        render_template('first_screen.html', title='Home', popular_projects=popular_projects,
                         recommended_projects=recommended_projects,
                         message=message, login=current_user.is_authenticated))
     response.set_cookie('error_message', '1', max_age=0)
@@ -54,9 +52,9 @@ def like():
     return jsonify({'status': 'OK'})
 
 
-@app.route('/user/<username>')
-def get_user(username):
-    return render_template('show_user.html')
+# @app.route('/user/<username>')
+# def get_user(username):
+#     return render_template('user_profile.html')
 
 
 @login_manager.unauthorized_handler
@@ -88,6 +86,6 @@ if __name__ == '__main__':
     app.register_blueprint(authen.blueprint)
     app.register_blueprint(errors.blueprint)
     app.register_blueprint(blog.blueprint, url_prefix='/project')
+    app.register_blueprint(user_profile.blueprint, url_prefix='/user')
     app.register_blueprint(ranking_projects.blueprint, url_prefix='/rank-projects')
-    app.register_blueprint(users.blueprint, url_prefix='/user')
     app.run(port=8080, host='127.0.0.1')

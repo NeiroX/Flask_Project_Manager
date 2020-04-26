@@ -74,7 +74,7 @@
         {% if current_user.is_authenticated %}
         <div class="btn-group">
             <a class="btn btn-outline-primary" href="/project/register">New project</a>
-            <a class="btn btn-outline-secondary" href="/register">{{current_user.username}}</a>
+            <a class="btn btn-outline-secondary" href="/user/{{current_user.username}}">{{current_user.username}}</a>
             <a class="btn btn-outline-danger" href="/logout">Logout</a>
         </div>
         {% else %}
@@ -97,6 +97,6 @@
 <main role="main" class="container">
     {% block content %}{% endblock %}
 </main>
-
+<img src="data:image/png;base64,{{bimg}}">
 </body>
 </html>

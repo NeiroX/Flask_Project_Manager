@@ -5,7 +5,7 @@ from models import Projects, User, Comment, Tags, project_tag_table
 from flask import Blueprint, render_template, request, redirect, make_response, url_for, abort
 from sqlalchemy import func
 from forms import RegisterProjectForm, EditProjectForm
-from models import Projects, User
+from models import Projects, User, association_comments
 import db_session
 import datetime
 from main import app, handle_unauth
@@ -43,9 +43,20 @@ def add_tags_to_project(prj_id, tags):
 
 
 def check_project(form):
-    if (len(form.short_description.data) >= 150):
-        return ('short_description', 'Length of short description should be less than 150')
+    if len(form.short_description.data) >= 150:
+        return 'short_description', 'Length of short description should be less than 150'
     return 'OK'
+
+
+def delete_project(sesion, project):
+    img_name = project.image_path
+    sesion.delete(project)
+    sesion.commit()
+    if img_name.split()[-1] != 'no_project_image.jpg':
+        try:
+            os.remove(img_name)
+        except Exception as e:
+            print(e)
 
 
 @blueprint.route('/register/check', methods=['GET', 'POST'])
@@ -108,17 +119,18 @@ def register_project():
         print('subprocess with last_id:', last_id)
 
         probable_tags = analyze_description(last_id)
-        subprocess.call(f'python analyze_description.py {last_id}', shell=True)
-        response = make_response(
-            redirect(url_for('blog.check_tags', id=str(last_id), tags=','.join(probable_tags))))
-        return response
+        # subprocess.call(f'python analyze_description.py {last_id}', shell=True)
+        if len(probable_tags) > 0:
+            response = make_response(
+                redirect(url_for('blog.check_tags', id=str(last_id), tags=','.join(probable_tags))))
+            return response
+        return redirect(url_for('base'))
     return render_template('register_project.html', form=form, title='Register project')
 
 
 @blueprint.route('/show/<int:id>', methods=['GET', 'POST'])
 def view_project(id):
     project = get_project(id)  # type: Projects
-    print()
     if project:
         form = CommentForm()
         if request.method == 'POST' and current_user.is_anonymous:
@@ -129,20 +141,29 @@ def view_project(id):
             sesion = db_session.create_session()
             com = sesion.query(Comment).filter(
                 Comment.id == sesion.query(func.max(Comment.id))).first()
+            print(com.__dict__)
+            sesion.close()
             project.comments.append(com)
             if not session.get('already_seen', False):
                 project.views += 1
-            print('This ok')
+            print('Comment ok')
             print(com.text)
-            sesion.commit()
+            form.text.data = ''
+            # return redirect(f'/project/show/{id}')
         info = project.__dict__
+        sesion = db_session.create_session()
+        comments_prev_list = sesion.query(Comment).filter_by(project_id=id).all()
+        comments = [(sesion.query(User).get(comment.creator_id), comment) for
+                    comment in
+                    comments_prev_list] if comments_prev_list else []
         print(info)
         print('Date', project.create_date)
         info['create_date'] = info['create_date'].ctime()
         return render_template('blog_view.html', title=project.name,
                                image=project.image_path,
                                form=form,
-                               author=project.owner.username, viewer=current_user, **info)
+                               author=project.owner.username, viewer=current_user,
+                               comments_list=comments, **info)
     else:
         abort(404)
 
@@ -169,14 +190,7 @@ def delete_project(id):
     sesion = db_session.create_session()
     project = sesion.query(Projects).get(id)
     if project and current_user == project.owner or current_user in project.collaborators:
-        img_name = project.image_path
-        sesion.delete(project)
-        sesion.commit()
-        if img_name.split()[-1] != 'no_project_image.jpg':
-            try:
-                os.remove(img_name)
-            except Exception as e:
-                print(e)
+        delete_project(sesion, project)
     else:
         abort(404)
     return redirect('/')

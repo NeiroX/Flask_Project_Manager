@@ -11,8 +11,11 @@
 .btn-huge{
     padding-top:20px;
     padding-bottom:20px;
+}
 
-
+.checked {
+    color: orange;
+}
 
 .card-setting  {
     min-width: 16.25rem;
@@ -22,6 +25,7 @@
     margin-right: 1rem !important;
     margin-left: 0rem !important;
 }
+
 
 
 
@@ -47,6 +51,17 @@
     width: 50%
 }
 
+
+.user-image {
+    width: 5rem;
+    height: 5rem;
+}
+
+
+
+.profile-nav-text {
+    font-size: 4rem; !important
+}
 
 
 
