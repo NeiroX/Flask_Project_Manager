@@ -64,7 +64,7 @@ def delete_project_image(img_name):
             print(e)
 
 
-# Проверка тегов ???
+# Проверка тегов
 @blueprint.route('/register/check', methods=['GET', 'POST'])
 @login_required
 def check_tags():

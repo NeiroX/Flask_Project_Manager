@@ -37,7 +37,7 @@ def add_to_already_ranked(id, rank):
     return {'response': 403}
 
 
-# Добавление проекта в очередь ???
+# Добавление проекта в очередь
 @blueprint.route('/add_rank', methods=['GET', 'POST'])
 def add():
     ans = add_to_already_ranked(int(request.args.get('pr_id')), request.args.get('rank'))

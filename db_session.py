@@ -35,6 +35,6 @@ def create_session() -> Session:
     return __factory()
 
 
-# ???
+# Соединение
 def create_coon():
     return engine.connect()

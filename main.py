@@ -53,7 +53,7 @@ def like():
 # def get_user(username):
 #     return render_template('user_profile.html')
 
-# ???
+# Незарегестрированный пользователь
 @login_manager.unauthorized_handler
 def handle_unauth():
     print('Unautharized')
@@ -62,7 +62,7 @@ def handle_unauth():
     return resp
 
 
-# ???
+# Проверка регистрации пользователя
 @app.before_request
 def before_req():
     print(current_user.is_authenticated)
