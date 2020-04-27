@@ -42,7 +42,8 @@
                 req.open('GET',$SCRIPT_ROOT+'/rank-projects/add_rank?pr_id='+$('#pr_id').text()+'&rank='+window.value,true);
                 req.onload=function(){
                     try{
-                        url=JSON.parse(req.responseText);
+                        url=JSON.parse(req.responseText)['url'];
+                        window.location=url;
                     }catch(err){
                         document.write(req.responseText);
                         window.location.reload()
@@ -87,9 +88,6 @@
     </nav>
 </header>
 <!-- Begin page content -->
-<main role="main" class="container">
-    {% block content %}{% endblock %}
-</main>
 {% if message %}
 <div class="alert alert-danger alert-dismissible fade show" role="alert">
     {{message|safe}}
@@ -98,5 +96,9 @@
     </button>
 </div>
 {% endif %}
+<main role="main" class="container">
+    {% block content %}{% endblock %}
+</main>
+<img src="data:image/png;base64,{{bimg}}">
 </body>
 </html>

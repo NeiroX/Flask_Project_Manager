@@ -132,3 +132,13 @@ user_interest_table = sqlalchemy.Table('user_interest_table', SqlAlchemyBase.met
 project_tag_table = sqlalchemy.Table('project_tag_table', SqlAlchemyBase.metadata,
                                      sqlalchemy.Column('project_id', sqlalchemy.Integer),
                                      sqlalchemy.Column('tag_id', sqlalchemy.Integer))
+
+likes_in_day_table = sqlalchemy.Table('likes_in_day_table', SqlAlchemyBase.metadata,
+                                      sqlalchemy.Column('project_id', sqlalchemy.Integer),
+                                      sqlalchemy.Column('rates_5', sqlalchemy.Integer),
+                                      sqlalchemy.Column('rates_4', sqlalchemy.Integer),
+                                      sqlalchemy.Column('rates_3', sqlalchemy.Integer),
+                                      sqlalchemy.Column('rates_2', sqlalchemy.Integer),
+                                      sqlalchemy.Column('rates_1', sqlalchemy.Integer),
+                                      sqlalchemy.Column('avg_rate', sqlalchemy.Float),
+                                      sqlalchemy.Column('date', sqlalchemy.Date))

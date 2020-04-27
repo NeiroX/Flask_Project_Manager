@@ -10,9 +10,12 @@ import user_profile
 import blog
 import db_session
 import ranking_projects
-from useful_functions import get_popular_projects, resize_image, get_recommended_projects
+from useful_functions import get_popular_projects, resize_image, get_recommended_projects, write_new_likes
 import datetime
 import schedule
+import threading
+import logging
+from time import sleep
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'flask_project_key'
@@ -20,6 +23,9 @@ app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'static/imgs')
 app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=365 * 10)
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s')
 
 
 @login_manager.user_loader
@@ -65,9 +71,19 @@ def before_req():
     print(current_user.is_authenticated)
 
 
+def schedule_thread():
+    schedule.every().day.do(write_new_likes)
+    while True:
+        schedule.run_pending()
+        sleep(1)
+    logging.debug('should exit now')
+
+
 if __name__ == '__main__':
     db_session.global_init("db.sqlite")
 
+    th = threading.Thread(target=schedule_thread)
+    th.start()
     app.register_blueprint(authen.blueprint)
     app.register_blueprint(errors.blueprint)
     app.register_blueprint(blog.blueprint, url_prefix='/project')

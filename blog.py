@@ -14,6 +14,8 @@ from werkzeug.utils import secure_filename
 import requests
 import os
 import subprocess
+from useful_functions import get_popular_projects,get_recommended_projects
+from flask_login import current_user
 from useful_functions import get_project, resize_image
 from analyze_description import analyze_description
 
@@ -122,10 +124,12 @@ def register_project():
         print('subprocess with last_id:', last_id)
 
         probable_tags = analyze_description(last_id)
-        subprocess.call(f'python analyze_description.py {last_id}', shell=True)
-        response = make_response(
-            redirect(url_for('blog.check_tags', id=str(last_id), tags=','.join(probable_tags))))
-        return response
+        # subprocess.call(f'python analyze_description.py {last_id}', shell=True)
+        if len(probable_tags) > 0:
+            response = make_response(
+                redirect(url_for('blog.check_tags', id=str(last_id), tags=','.join(probable_tags))))
+            return response
+        return redirect(url_for('base'))
     return render_template('register_project.html', form=form, title='Register project')
 
 
@@ -145,12 +149,15 @@ def view_project(id):
             print(com.__dict__)
             sesion.close()
             project.comments.append(com)
+            if not session.get('already_seen', False):
+                project.views += 1
             print('Comment ok')
             print(com.text)
             form.text.data = ''
+            # return redirect(f'/project/show/{id}')
         info = project.__dict__
-        comments_prev_list = get_project_comments(id)
         sesion = db_session.create_session()
+        comments_prev_list = sesion.query(Comment).filter_by(project_id=id).all()
         comments = [(sesion.query(User).get(comment.creator_id), comment) for
                     comment in
                     comments_prev_list] if comments_prev_list else []
@@ -247,4 +254,4 @@ def edit_blog(id):
             return redirect(f'/project/show/{id}')
         else:
             abort(404)
-    return render_template('edit_project.html', title='Edit project', form=form, id=id)
+    return render_template('edit_project.html', title='Edit project', form=form)
