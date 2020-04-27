@@ -5,8 +5,9 @@ import argparse
 import os
 import time
 
-
+# Функция, которая анализирует краткое описание на ключевые слова и добавляет их в бд
 def analyze_description(pr_id, is_editing=False):
+    #Подключаемся к бд, достаем проект и анализируем его краткое содержание
     global_init("db.sqlite")
     project_id = pr_id
     sesion = create_session()
@@ -20,6 +21,8 @@ def analyze_description(pr_id, is_editing=False):
             sesion.commit()
     probable_tags = []
     all_tags = set()
+    #Анализ - проход по всем словам и проверка есть ли оне в файле с тегами или начинаются ли они на ~
+    #Если есть или начинаются - добавить их к тегам проекта
     with open(os.path.join(os.getcwd(), 'data/main_tags.txt')) as main_tags_file:
         for word in main_tags_file.readlines():
             all_tags.add(word.strip())

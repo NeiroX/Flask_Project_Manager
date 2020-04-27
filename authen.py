@@ -9,6 +9,7 @@ blueprint = Blueprint('authen', __name__,
                       template_folder='templates')
 
 
+# Функция проверки информации входа в аккаунт(на существующий username, правильность пароля)
 def check_user(form):
     sesion = db_session.create_session()
     user = sesion.query(User).filter(
@@ -21,25 +22,31 @@ def check_user(form):
     return 'OK'
 
 
+# Функция проверки информации регистарции пользователя
 def check_new_user(form: RegisterUserForm):
+    # длина логина >4
     if len(form.username.data) < 4:
         return ('username', 'Length should be more than 3')
     sesion = db_session.create_session()
+    # Существующий email
     if sesion.query(User).filter(User.email == form.email.data).first():
         return ('email', 'Email already exists')
+    # Существующий username
     if sesion.query(User).filter(User.username == form.username.data).first():
         return ('username', 'Username already taken')
-    if form.age.data <= 0:
-        return ('age', 'Incorrect age')
+    # Правильный возраст
     if type(form.age.data) != int:
         return ('age', 'Field must be digit')
+    if form.age.data <= 0:
+        return ('age', 'Incorrect age')
     return 'OK'
 
 
+# Регистрация(форма и добавление в бд)
 @blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterUserForm()
-
+    # вывод списка стран
     countries_list = [(country, country) for country in
                       [line.strip() for line in open('data/countries.txt').readlines()]]
     form.country.choices = countries_list
@@ -77,6 +84,7 @@ def register():
     return render_template('register.html', form=form, title='Register')
 
 
+# Вод в аккаунт и работа с куки
 @blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     next = request.args.get('next', url_for('base'))
@@ -109,6 +117,7 @@ def login():
     return resp
 
 
+# Функиця выхода
 @blueprint.route('/logout')
 def logout():
     logout_user()

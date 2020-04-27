@@ -7,7 +7,7 @@ import db_session
 from flask_login import current_user, login_required
 from blog import delete_project
 from main import handle_unauth
-from very_simple_stats import plot_avg_likes
+from very_simple_stats import plot_avg_likes, plot_date_likes, plot_day_likes
 import datetime
 import io
 import base64
@@ -88,11 +88,12 @@ def stats_for_project(username, project_id):
     if current_user.username != username:
         abort(401)
     else:
-        img = plot_avg_likes([1, 2, 3],
-                             [datetime.datetime(2020, 3, 10),
-                              datetime.datetime(2020, 3, 29),
-                              datetime.datetime(2020, 4, 3)])
-        return render_template('project_simple_stats.html', stats_imgs=[{'base_64': img, 'title': 'Avg'}])
+        img = plot_avg_likes(project_id)
+        stats_imgs = [{'base_64': plot_avg_likes(project_id), 'title': 'Average at all times'},
+                      {'base_64': plot_date_likes(project_id), 'title': 'Likes at all times'}]
+        for img in plot_day_likes(project_id):
+            stats_imgs.append({'base_64': img[0], 'title': str(img[1])})
+        return render_template('project_simple_stats.html', stats_imgs=stats_imgs)
 
 
 @blueprint.route('/<string:username>/projects')

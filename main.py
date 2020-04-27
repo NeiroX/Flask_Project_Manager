@@ -72,7 +72,7 @@ def before_req():
 
 
 def schedule_thread():
-    schedule.every().minute.do(write_new_likes)
+    schedule.every().day.do(write_new_likes)
     while True:
         schedule.run_pending()
         sleep(1)

@@ -53,7 +53,7 @@ def write_new_likes():
     for project in sesion.query(Projects).all():
         values = {'rates_' + str(i): getattr(project, 'rates_' + str(i)) for i in range(1, 6)}
         print('values', values)
-        values.update({'project_id': project.id, 'date': current_date})
+        values.update({'project_id': project.id, 'avg_rate': project.avg_rate, 'date': current_date})
         ins = likes_in_day_table.insert().values(**values)
         conn.execute(ins)
     conn.close()
