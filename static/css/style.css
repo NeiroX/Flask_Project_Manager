@@ -24,10 +24,44 @@
     margin-bottom: 1rem !important;
     margin-right: 1rem !important;
     margin-left: 0rem !important;
+    background-color: #343a40;
 }
 
+.forms-label-text {
+    color: #E3E3E3;
+}
 
+.forms-input {
+    background-color: #F6F6F6;
+}
 
+.full-description-text {
+    color: #F3F3F3;
+}
+
+.comment-text {
+    color: #B8B8B8;
+}
+
+.comment-name {
+    color: #D5D5D5;
+}
+
+.short-description-text {
+    color: #c2cfe0;
+}
+
+.name-text {
+    color: #fff;
+}
+
+.created-date-text {
+    color: #bfbfbf;
+}
+
+.txt-color {
+    color: unset;
+}
 
 .short-description-card-text {
     font-size: 0.938rem;
@@ -37,6 +71,10 @@
     font-size: 1.25rem;
 }
 
+.line {
+    width: 68.3rem;
+    background-color: #d6d6d6;
+}
 
 .deck-setting {
     padding-left: 1.9rem;
@@ -50,18 +88,49 @@
     margin-right: auto;
     width: 50%
 }
+.project-line {
+    background-color: #d6d6d6;
+}
 
+.jumbotron {
+    background-color: #2A2A2A !important;
+}
 
 .user-image {
     width: 5rem;
     height: 5rem;
 }
 
-
-
-.profile-nav-text {
-    font-size: 4rem; !important
+.profile-nav {
+    background-color: #434343; !important
 }
 
+.profile-nav-text {
+    color: #F0F0F0; !important
+    font-size: 6rem; !important
+}
 
+.stats-title {
+    color: #4CBB5F;
+    text-align: center;
+}
 
+.stats-info {
+    color: #BFBFBF;
+    text-align: center;
+}
+
+.stats-table table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.stats-table > th, td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 0px solid #ddd;
+}
+
+body {
+    background-color: #1E1B1B !important;
+}

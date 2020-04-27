@@ -1,11 +1,14 @@
 from PIL import Image
 import numpy
 import matplotlib.pyplot as plt
+import matplotlib
 import datetime
 import io
 import base64
 import db_session
 from models import likes_in_day_table
+
+matplotlib.use('TkAgg')
 
 
 def get_dates(pr_id):

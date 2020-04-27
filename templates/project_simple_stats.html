@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block content%}
-    <div>
-        {% for img_j in stats_imgs %}
-            <h2>{{img_j['title']}}</h2>
-            <hr>
-            <img src="data:image/png;base64,{{img_j['base_64']}}">
-        {% endfor %}
-    </div>
+<div>
+    {% for img_j in stats_imgs %}
+    <h2 class="name-text">{{img_j['title']}}</h2>
+    <hr class="line">
+    <img src="data:image/png;base64,{{img_j['base_64']}}">
+    {% endfor %}
+</div>
 {% endblock %}
