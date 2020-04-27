@@ -8,6 +8,7 @@ from flask_login import UserMixin
 import json
 
 
+# Пользователь в бд
 class User(SqlAlchemyBase, UserMixin):
     __tablename__ = 'users'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
@@ -40,6 +41,7 @@ class User(SqlAlchemyBase, UserMixin):
         return check_password_hash(self.hashed_password, password)
 
 
+# Проект в бд
 class Projects(SqlAlchemyBase):
     __tablename__ = 'projects'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
@@ -89,6 +91,7 @@ class Projects(SqlAlchemyBase):
         return words
 
 
+# Комментарий в бд
 class Comment(SqlAlchemyBase):
     __tablename__ = 'comments'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
@@ -99,24 +102,28 @@ class Comment(SqlAlchemyBase):
     likes = sqlalchemy.Column(sqlalchemy.Integer, default=0)
 
 
+# Ключевые слова в бд
 class Tags(SqlAlchemyBase):
     __tablename__ = 'tags'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     interest = sqlalchemy.Column(sqlalchemy.String, unique=True)
 
 
+# Таблица соответствия проекта и его коллабораторов
 association_collabs = sqlalchemy.Table('association_collabs', SqlAlchemyBase.metadata,
                                        sqlalchemy.Column('project_id', sqlalchemy.Integer,
                                                          sqlalchemy.ForeignKey('projects.id')),
                                        sqlalchemy.Column('collab_id', sqlalchemy.Integer,
                                                          sqlalchemy.ForeignKey('users.id')))
 
+# Таблица соответствия проекта и его комментариев
 association_comments = sqlalchemy.Table('association_comments', SqlAlchemyBase.metadata,
                                         sqlalchemy.Column('project_id', sqlalchemy.Integer,
                                                           sqlalchemy.ForeignKey('projects.id')),
                                         sqlalchemy.Column('comment_id', sqlalchemy.Integer,
                                                           sqlalchemy.ForeignKey('comments.id')))
 
+# Таблица оценок
 ranked_table = sqlalchemy.Table('ranked_table', SqlAlchemyBase.metadata,
                                 sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True,
                                                   autoincrement=True),
@@ -124,10 +131,12 @@ ranked_table = sqlalchemy.Table('ranked_table', SqlAlchemyBase.metadata,
                                 sqlalchemy.Column('user_id', sqlalchemy.Integer),
                                 sqlalchemy.Column('rank', sqlalchemy.Integer))
 
+# Таблица соответствия интересов пользователя
 user_interest_table = sqlalchemy.Table('user_interest_table', SqlAlchemyBase.metadata,
                                        sqlalchemy.Column('user_id', sqlalchemy.Integer),
                                        sqlalchemy.Column('tag_id', sqlalchemy.Integer))
 
+# Таблица соответствия ключевых слов в описании проекта
 project_tag_table = sqlalchemy.Table('project_tag_table', SqlAlchemyBase.metadata,
                                      sqlalchemy.Column('project_id', sqlalchemy.Integer),
                                      sqlalchemy.Column('tag_id', sqlalchemy.Integer))
