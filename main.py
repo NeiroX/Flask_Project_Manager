@@ -15,6 +15,7 @@ import datetime
 import schedule
 import threading
 import logging
+from time import sleep
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'flask_project_key'
@@ -72,9 +73,9 @@ def before_req():
 
 def schedule_thread():
     schedule.every().day.do(write_new_likes)
-    # while True:
-    #    schedule.run_pending()
-    #    sleep(1)
+    while True:
+        schedule.run_pending()
+        sleep(1)
     logging.debug('should exit now')
 
 
