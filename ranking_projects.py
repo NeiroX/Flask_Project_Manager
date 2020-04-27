@@ -5,6 +5,7 @@ from models import ranked_table, Projects
 from flask_login import current_user
 from sqlalchemy import insert, func, select
 import schedule
+from useful_functions import add_comment
 
 blueprint = Blueprint('ranking_projects', __name__, template_folder='templates')
 ADMIN = 'A'
@@ -35,7 +36,12 @@ def add_to_already_ranked(id, rank):
 
 @blueprint.route('/add_rank', methods=['GET', 'POST'])
 def add():
-    ans = add_to_already_ranked(int(request.args.get('pr_id')), request.args.get('rank'))
+    pr_id = int(request.args.get('pr_id'))
+    try:
+        add_comment(pr_id, current_user.id, request.args.get('text'))
+    except:
+        print('Comment not added')
+    ans = add_to_already_ranked(pr_id, request.args.get('rank'))
     if ans['response'] == 200:
         next_project_ans = choose_project()
         if not next_project_ans:

@@ -26,6 +26,7 @@
             crossorigin="anonymous"></script>
     <script type="text/javascript">
         $SCRIPT_ROOT={{request.script_root|tojson|safe}};
+
     </script>
     <script type="text/javascript">
         $(function(){
@@ -33,13 +34,14 @@
                 window.value=event.currentTarget.id;
             });
         });
+
     </script>
     <script type="text/javascript">
         $(function(){
             $('button.next-button').bind('click',function(event){
                 var req=new XMLHttpRequest();
                 req.overrideMimeType("application/json");
-                req.open('GET',$SCRIPT_ROOT+'/rank-projects/add_rank?pr_id='+$('#pr_id').text()+'&rank='+window.value,true);
+                req.open('GET',$SCRIPT_ROOT+'/rank-projects/add_rank?pr_id='+$('#pr_id').text()+'&rank='+window.value+'&text='+$('#comment_text').val(),true);
                 req.onload=function(){
                     try{
                         url=JSON.parse(req.responseText)['url'];
@@ -52,6 +54,7 @@
                 req.send();
             });
         });
+
     </script>
     <link rel="shortcut icon" href="/static/imgs/system_imgs/PQueue.png" type="image/png">
     <title>{{title}}</title>
@@ -65,9 +68,9 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         {% if current_user.is_authenticated %}
-            <div class="text-center">
-                <a href="/rank-projects" class="btn btn-primary btn-lg btn-block">Rate projects!</a>
-            </div>
+        <div class="text-center">
+            <a href="/rank-projects" class="btn btn-primary btn-lg btn-block">Rate projects!</a>
+        </div>
         {% endif %}
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
@@ -99,6 +102,5 @@
 <main role="main" class="container">
     {% block content %}{% endblock %}
 </main>
-<img src="data:image/png;base64,{{bimg}}">
 </body>
 </html>

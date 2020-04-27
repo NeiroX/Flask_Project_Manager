@@ -6,8 +6,10 @@ from flask import abort
 from PIL import Image, ImageDraw
 import os
 from sqlalchemy.orm import subqueryload
+from sqlalchemy import func
 import matplotlib.pyplot as plt
 import numpy
+from models import Comment
 
 
 def delete_project_image(img_name):
@@ -16,6 +18,29 @@ def delete_project_image(img_name):
             os.remove(img_name)
         except Exception as e:
             print(e)
+
+
+def add_comment_to_project(pr_id):
+    sesion = db_session.create_session()
+    project = sesion.query(Projects).get(pr_id)
+    com = sesion.query(Comment).filter(
+        Comment.id == sesion.query(func.max(Comment.id))).first()
+    project.comments.append(com)
+    sesion.commit()
+    sesion.close()
+    return
+
+
+def add_comment(project_id, user_id, text):
+    comment = Comment(text=text,
+                      creator_id=user_id,
+                      project_id=project_id)
+    sesion = db_session.create_session()
+    sesion.add(comment)
+    sesion.commit()
+    sesion.close()
+    add_comment_to_project(project_id)
+    return 'OK'
 
 
 def get_popular_projects(num=4):

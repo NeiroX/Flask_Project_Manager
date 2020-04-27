@@ -8,13 +8,14 @@ import db_session
 from models import likes_in_day_table
 
 
-def get_dates():
+def get_dates(pr_id):
+    '''Получить все даты из таблицы likes_in_day_table'''
     sesion = db_session.create_session()
-    dates = [date[0] for date in sesion.query(likes_in_day_table.c.date).all()]
+    dates = [date[0] for date in sesion.query(likes_in_day_table.c.date).filter(likes_in_day_table.c.project_id==pr_id)]
     return set(dates)
 
-
 def get_project_likes(pr_id):
+    '''Получить все оценки из таблицы likes_in_day_table'''
     sesion = db_session.create_session()
     likes_db = sesion.query(likes_in_day_table).filter(likes_in_day_table.c.project_id == pr_id)
     ans = []
@@ -29,6 +30,8 @@ def get_project_likes(pr_id):
 
 
 def convert_pillow_to_base64(figure):
+    '''Преобразование matplotlib фигуры в Pillow Image,
+     сохранение ее в формате png и перевод с байтов в base_64(для html)'''
     w, h = figure.canvas.get_width_height()
     numpy_img_arr = numpy.frombuffer(figure.canvas.tostring_rgb(), dtype=numpy.uint8).reshape(h, w, 3)
     img = Image.fromarray(numpy_img_arr)
@@ -40,7 +43,11 @@ def convert_pillow_to_base64(figure):
 
 
 def plot_avg_likes(pr_id):
-    dates = get_dates()
+    '''Нарисовать график средних значений в какой-то период
+        dates: Период(datetime)
+        avg_likes: Лайки за этот период
+    '''
+    dates = get_dates(pr_id)
     avg_likes = [likes['avg_rate'] for likes in get_project_likes(pr_id)]
     fig = plt.figure()
     plot = fig.add_subplot(111)
@@ -57,7 +64,11 @@ def plot_avg_likes(pr_id):
 
 
 def plot_date_likes(pr_id):
-    dates = get_dates()
+    '''Нарисовать график всех значений в какой-то промежуток времени
+        dates: Период(datetime)
+        dic: Словарь оценок
+    '''
+    dates = get_dates(pr_id)
     dic = {'rates_5': [], 'rates_4': [], 'rates_3': [], 'rates_2': [], 'rates_1': []}
     for lik in get_project_likes(pr_id):
         for key in lik.keys():
@@ -78,9 +89,10 @@ def plot_date_likes(pr_id):
 
 
 def plot_day_likes(pr_id):
+    '''Нарисовать график оценок в конкретный день'''
     ans = []
     dics = get_project_likes(pr_id)
-    for i, date in enumerate(get_dates()):
+    for i, date in enumerate(get_dates(pr_id)):
         fig = plt.figure()
         bad_dic = dics[i]
         dic = {1: bad_dic['rates_1'], 2: bad_dic['rates_2'], 3: bad_dic['rates_3'], 4: bad_dic['rates_4'],
@@ -88,7 +100,7 @@ def plot_day_likes(pr_id):
         colors = {1: 'red', 2: 'coral', 3: 'gold', 4: 'yellowgreen', 5: 'darkgreen'}
         plot = fig.add_subplot(111)
         names, values = zip(*dic.items())
-        y_pos = numpy.arange(len(names))
+        y_pos = numpy.arange(1,len(names)+1)
         plot.bar(y_pos, values, color=[colors[key] for key in dic])
         plot.set_xticks(y_pos, names)
         plot.set_title(f'Likes on {date.strftime("%d.%m.%Y")}')

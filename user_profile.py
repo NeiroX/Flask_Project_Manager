@@ -18,6 +18,7 @@ blueprint = Blueprint('user', __name__,
 
 
 def get_user(username):
+    '''Получение объекта User по его username'''
     sesion = db_session.create_session()
     user_obj = sesion.query(User).filter_by(username=username).first()
     sesion.close()
@@ -25,6 +26,7 @@ def get_user(username):
 
 
 def get_projects(user_id):
+    '''Получение проектов юзера по его id'''
     sesion = db_session.create_session()
     projects = sesion.query(Projects).filter_by(owner_id=user_id).all()
     sesion.close()
@@ -32,6 +34,7 @@ def get_projects(user_id):
 
 
 def get_user_comments(user_id):
+    '''Получение комментариев которые написал юзер'''
     sesion = db_session.create_session()
     comments = sesion.query(Comment).filter_by(creator_id=user_id).all()
     sesion.close()
@@ -39,6 +42,7 @@ def get_user_comments(user_id):
 
 
 def check_validation_of_changes(form: EditUserForm, old_email, old_username):
+    '''Проверка формы на правильность'''
     if len(form.username.data) < 4:
         return ('username', 'Length should be more than 3')
     sesion = db_session.create_session()
@@ -65,26 +69,9 @@ def user_info(username):
         abort(404)
 
 
-@blueprint.route('/send-img', methods=['GET', 'POST'])
-def send_img():
-    img_base64 = plot_avg_likes([1, 2, 3], [datetime.datetime(2020, 3, 1), datetime.datetime(2020, 3, 20),
-                                            datetime.datetime(2020, 3, 28)])
-    popular_projects = get_popular_projects()
-    recommended_projects = get_recommended_projects()
-    message = request.cookies.get('error_message')
-    response = make_response(
-        render_template('first_screen.html', title='Home', popular_projects=popular_projects,
-                        recommended_projects=recommended_projects,
-                        message=message,
-                        login=current_user.is_authenticated,
-                        bimg=img_base64))
-    response.set_cookie('error_message', '1', max_age=0)
-    return response
-    # return send_file(output, mimetype='image/png', as_attachment=False)
-
-
 @blueprint.route('/<string:username>/projects/stats/<int:project_id>')
 def stats_for_project(username, project_id):
+    '''Получение всей статистики по проекту'''
     if current_user.username != username:
         abort(401)
     else:
@@ -98,6 +85,7 @@ def stats_for_project(username, project_id):
 
 @blueprint.route('/<string:username>/projects')
 def user_projects(username):
+    '''Получить все проекы ользователя'''
     user_obj = get_user(username)
     if user_obj:
         projects = get_projects(user_obj.id)
