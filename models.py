@@ -140,4 +140,4 @@ likes_in_day_table = sqlalchemy.Table('likes_in_day_table', SqlAlchemyBase.metad
                                       sqlalchemy.Column('rates_2', sqlalchemy.Integer),
                                       sqlalchemy.Column('rates_1', sqlalchemy.Integer),
                                       sqlalchemy.Column('avg_rate', sqlalchemy.Float),
-                                      sqlalchemy.Column('date', sqlalchemy.Date))
+                                      sqlalchemy.Column('date', sqlalchemy.DateTime))
