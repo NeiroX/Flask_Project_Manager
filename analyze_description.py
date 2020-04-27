@@ -6,6 +6,7 @@ import os
 import time
 
 
+# Функция, которая анализирует краткое описание на ключевые слова и добавляет их в бд
 def analyze_description(pr_id, is_editing=False):
     global_init("db.sqlite")
     project_id = pr_id

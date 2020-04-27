@@ -4,6 +4,7 @@ from wtforms import SelectField, StringField, PasswordField, IntegerField, Submi
 from wtforms.validators import DataRequired, Email, EqualTo
 
 
+# Общая форма для пользователя
 class UserForm(FlaskForm):
     name = StringField('* Name', validators=[DataRequired()])
     surname = StringField('* Surname', validators=[DataRequired()])
@@ -14,6 +15,7 @@ class UserForm(FlaskForm):
     age = IntegerField('* Age', validators=[DataRequired()])
 
 
+# Форма регистарации пользователя, унаследованная от общей
 class RegisterUserForm(UserForm):
     password = PasswordField('* Password', validators=[DataRequired()])
     password_again = PasswordField('* Password again',
@@ -24,10 +26,12 @@ class RegisterUserForm(UserForm):
     submit = SubmitField('Register')
 
 
+# Форма изменения пользователя, унаследованная от общей
 class EditUserForm(UserForm):
     submit = SubmitField('Save')
 
 
+# Форма входа в аккаунт
 class LoginForm(FlaskForm):
     username_email = StringField('Username or email', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
@@ -35,6 +39,7 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 
+# Общая форма проекта
 class ProjectForm(FlaskForm):
     name = StringField('* Project name', validators=[DataRequired()])
     image_field = FileField('Project image')
@@ -45,14 +50,17 @@ class ProjectForm(FlaskForm):
         'Collaborators')
 
 
+# Форма регистарции проекта, унаследованная от общей
 class RegisterProjectForm(ProjectForm):
     submit = SubmitField('Create project')
 
 
+# Форма изменения проекта, унаследованная от общей
 class EditProjectForm(ProjectForm):
     submit = SubmitField('Save')
 
 
+# Форма комментариев к проекту
 class CommentForm(FlaskForm):
     text = TextAreaField('Comment', validators=[DataRequired()])
     submit = SubmitField('Leave a comment')

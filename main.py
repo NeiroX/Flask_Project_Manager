@@ -22,12 +22,14 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
+# Загрузка пользователя
 @login_manager.user_loader
 def load_user(user_id):
     sesion = db_session.create_session()
     return sesion.query(User).get(user_id)
 
 
+# Главная страница
 @app.route('/')
 def base():
     popular_projects = get_popular_projects()
@@ -51,7 +53,7 @@ def like():
 # def get_user(username):
 #     return render_template('user_profile.html')
 
-
+# ???
 @login_manager.unauthorized_handler
 def handle_unauth():
     print('Unautharized')
@@ -60,6 +62,7 @@ def handle_unauth():
     return resp
 
 
+# ???
 @app.before_request
 def before_req():
     print(current_user.is_authenticated)

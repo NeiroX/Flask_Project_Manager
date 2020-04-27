@@ -9,6 +9,7 @@ blueprint = Blueprint('authen', __name__,
                       template_folder='templates')
 
 
+# Функция проверки информации входа в аккаунт
 def check_user(form):
     sesion = db_session.create_session()
     user = sesion.query(User).filter(
@@ -21,6 +22,7 @@ def check_user(form):
     return 'OK'
 
 
+# Функция проверки информации регистарции пользователя
 def check_new_user(form: RegisterUserForm):
     if len(form.username.data) < 4:
         return ('username', 'Length should be more than 3')
@@ -36,6 +38,7 @@ def check_new_user(form: RegisterUserForm):
     return 'OK'
 
 
+# Регистрация(форма и добавление в бд)
 @blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterUserForm()
@@ -78,6 +81,7 @@ def register():
     return render_template('register.html', form=form, title='Register')
 
 
+# Вод в аккаунт и работа с куки
 @blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     print('login', request.args.get('next'), request.args.get('login_message'))
@@ -111,6 +115,7 @@ def login():
     return resp
 
 
+# Функиця выхода
 @blueprint.route('/logout')
 def logout():
     logout_user()

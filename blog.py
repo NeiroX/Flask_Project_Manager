@@ -21,6 +21,7 @@ blueprint = Blueprint('blog', __name__,
                       template_folder='templates')
 
 
+# Добавление ключевых слов(тегов) в бд ???
 def add_tags_to_project(prj_id, tags):
     sesion = db_session.create_session()
     for tag_name in tags:
@@ -31,22 +32,22 @@ def add_tags_to_project(prj_id, tags):
             sesion.commit()
             last_id = sesion.query(func.max(Tags.id)).one()[0]
             last_id = last_id if last_id else 1
-            print('last tag id', last_id)
         else:
             last_id = tag.id
-        print('Ths', prj_id, last_id)
         conn = db_session.create_coon()
         ins = project_tag_table.insert().values(project_id=prj_id, tag_id=last_id)
         conn.execute(ins)
     return
 
 
+# Проверка информации регистрации проекта
 def check_project(form):
     if len(form.short_description.data) >= 150:
         return 'short_description', 'Length of short description should be less than 150'
     return 'OK'
 
 
+# Получение комментариев к проекту
 def get_project_comments(project_id):
     sesion = db_session.create_session()
     comments = sesion.query(Comment).filter_by(project_id=project_id).all()
@@ -54,6 +55,7 @@ def get_project_comments(project_id):
     return comments
 
 
+# Удаление аватарок к проекту
 def delete_project_image(img_name):
     if img_name.split()[-1] != 'no_project_image.jpg':
         try:
@@ -62,26 +64,23 @@ def delete_project_image(img_name):
             print(e)
 
 
+# Проверка тегов ???
 @blueprint.route('/register/check', methods=['GET', 'POST'])
 @login_required
 def check_tags():
-    print('We are there')
     tags = request.args.get('tags').split(',')
-    print(len(tags))
     if request.method == 'POST':
-        print('this tag', request.form.keys())
         wrong = [int(key[6:]) - 1 for key in request.form.keys()]
-        print(wrong)
         add_tags_to_project(int(request.args.get('id')),
                             [tags[i] for i in range(len(tags)) if i not in wrong])
         return redirect(url_for('base'))
     return render_template('check_tags.html', tags=tags)
 
 
+# Реристрация проекта(форма и добавление в бд)
 @blueprint.route('/register', methods=['GET', 'POST'])
 @login_required
 def register_project():
-    print(current_user.id)
     form = RegisterProjectForm()
     if request.method == 'POST' and form.validate_on_submit():
         project = Projects(name=form.name.data,
@@ -119,7 +118,6 @@ def register_project():
         sesion.add(project)
         sesion.commit()
         sesion.close()
-        print('subprocess with last_id:', last_id)
 
         probable_tags = analyze_description(last_id)
         subprocess.call(f'python analyze_description.py {last_id}', shell=True)
@@ -129,6 +127,7 @@ def register_project():
     return render_template('register_project.html', form=form, title='Register project')
 
 
+# Просмотр проекта и форма комментариев
 @blueprint.route('/show/<int:id>', methods=['GET', 'POST'])
 def view_project(id):
     project = get_project(id)  # type: Projects
@@ -137,16 +136,12 @@ def view_project(id):
         if request.method == 'POST' and current_user.is_anonymous:
             return handle_unauth()
         comment_ans = add_comment(project, form)
-        print('Went put')
         if comment_ans == 'OK':
             sesion = db_session.create_session()
             com = sesion.query(Comment).filter(
                 Comment.id == sesion.query(func.max(Comment.id))).first()
-            print(com.__dict__)
             sesion.close()
             project.comments.append(com)
-            print('Comment ok')
-            print(com.text)
             form.text.data = ''
         info = project.__dict__
         comments_prev_list = get_project_comments(id)
@@ -154,8 +149,6 @@ def view_project(id):
         comments = [(sesion.query(User).get(comment.creator_id), comment) for
                     comment in
                     comments_prev_list] if comments_prev_list else []
-        print(info)
-        print('Date', project.create_date)
         info['create_date'] = info['create_date'].ctime()
         if info['edit_date'] is not None:
             info['edit_date'] = info['edit_date']
@@ -168,6 +161,7 @@ def view_project(id):
         abort(404)
 
 
+# Добавление комментариев в бд
 @login_required
 def add_comment(project, form):
     if request.method == 'POST' and form.validate_on_submit():
@@ -184,6 +178,7 @@ def add_comment(project, form):
     return None
 
 
+# Функция удаление проектов и их содержимого
 @blueprint.route('/delete/<int:id>', methods=['GET', 'POST'])
 @login_required
 def delete_project(id):
@@ -203,6 +198,7 @@ def delete_project(id):
     return redirect('/')
 
 
+# Изменение данных проекта и сохранение их в бд
 @blueprint.route('/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_blog(id):
@@ -242,7 +238,6 @@ def edit_blog(id):
                                              filename='imgs/project_imgs/no_project_image.jpg')
 
             sesion.commit()
-            print('commited')
             # subprocess.call(f'python3 analyze_description.py {last_id} --editing', shell=True)
             return redirect(f'/project/show/{id}')
         else:

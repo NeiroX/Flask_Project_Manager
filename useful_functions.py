@@ -12,6 +12,7 @@ import db_session
 from sqlalchemy.orm import lazyload, subqueryload
 
 
+# Получение популярных проектов
 def get_popular_projects():
     sesion = db_session.create_session()
     projects = sesion.query(Projects). \
@@ -22,6 +23,7 @@ def get_popular_projects():
     return projects
 
 
+# Получение рекомендованных для пользователя проектов
 def get_recommended_projects(num=8):
     sesion = db_session.create_session()
     return sesion.query(Projects). \
@@ -30,6 +32,7 @@ def get_recommended_projects(num=8):
         all()
 
 
+# Изменение размеров картинки
 def resize_image(img_url, w, h):
     try:
         image = Image.open(img_url)
@@ -40,13 +43,7 @@ def resize_image(img_url, w, h):
         return e
 
 
-import db_session
-from models import Projects
-from flask import abort
-from PIL import Image
-import os
-
-
+# Получение проекта из по бд по id
 def get_project(id):
     sesion = db_session.create_session()
     object_project = sesion.query(Projects).get(id)
@@ -56,11 +53,7 @@ def get_project(id):
     abort(404)
 
 
-# def get_comments(project_id):
-#     session = db_session.create_session()
-#     comments
-
-
+# Изменение размеров картинки
 def resize_image(image_name, w, h):
     try:
         path = os.path.join(os.getcwd(), os.path.join('static/imgs/project_imgs',

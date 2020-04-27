@@ -13,6 +13,7 @@ blueprint = Blueprint('user', __name__,
                       template_folder='templates')
 
 
+# Получение пользователя
 def get_user(username):
     sesion = db_session.create_session()
     user_obj = sesion.query(User).filter_by(username=username).first()
@@ -20,6 +21,7 @@ def get_user(username):
     return user_obj
 
 
+# Получение проектов пользователя
 def get_projects(user_id):
     sesion = db_session.create_session()
     projects = sesion.query(Projects).filter_by(owner_id=user_id).all()
@@ -27,6 +29,7 @@ def get_projects(user_id):
     return projects
 
 
+# Получение комментариев пользователя
 def get_user_comments(user_id):
     sesion = db_session.create_session()
     comments = sesion.query(Comment).filter_by(creator_id=user_id).all()
@@ -34,6 +37,7 @@ def get_user_comments(user_id):
     return comments
 
 
+# Проверка данных изменения профиля пользователя
 def check_validation_of_changes(form: EditUserForm, old_email, old_username):
     if len(form.username.data) < 4:
         return ('username', 'Length should be more than 3')
@@ -51,6 +55,7 @@ def check_validation_of_changes(form: EditUserForm, old_email, old_username):
     return 'OK'
 
 
+# Отображение профиля пользователя и информации о нем
 @blueprint.route('/<string:username>')
 def user_info(username):
     user_obj = get_user(username)
@@ -61,6 +66,7 @@ def user_info(username):
         abort(404)
 
 
+# Отображение профиля пользователя и его проектов
 @blueprint.route('/projects/<string:username>')
 def user_projects(username):
     user_obj = get_user(username)
@@ -72,6 +78,7 @@ def user_projects(username):
         abort(404)
 
 
+# Отображение профиля пользователя и его статистику
 @blueprint.route('/statistic/<string:username>')
 def user_statistics(username):
     user_obj = get_user(username)
@@ -93,11 +100,11 @@ def user_statistics(username):
         abort(404)
 
 
+# Удаление аккаунта
 @blueprint.route('/delete/<string:username>')
 @login_required
 def delete_user(username):
     user_obj = get_user(username)
-    print('hi')
     if user_obj:
         if current_user.id == user_obj.id:
             projects = get_projects(user_obj.id)
@@ -120,6 +127,7 @@ def delete_user(username):
         abort(404)
 
 
+# Изменение данных пользователя
 @blueprint.route('/edit/<string:username>', methods=['GET', 'POST'])
 @login_required
 def edit_user(username):
