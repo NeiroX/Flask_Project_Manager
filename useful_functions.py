@@ -16,13 +16,13 @@ def get_popular_projects():
     sesion = db_session.create_session()
     projects = sesion.query(Projects). \
         options(subqueryload(Projects.owner)). \
-        order_by(Projects.avg_rate.desc()). \
-        limit(5). \
+        order_by(Projects.points.desc()). \
+        limit(8). \
         all()
     return projects
 
 
-def get_recommended_projects(num=5):
+def get_recommended_projects(num=8):
     sesion = db_session.create_session()
     return sesion.query(Projects). \
         options(subqueryload(Projects.owner)). \
