@@ -16,7 +16,7 @@ def get_popular_projects():
     sesion = db_session.create_session()
     projects = sesion.query(Projects). \
         options(subqueryload(Projects.owner)). \
-        order_by(Projects.avg_rate.desc()). \
+        order_by(Projects.points.desc()). \
         limit(5). \
         all()
     return projects

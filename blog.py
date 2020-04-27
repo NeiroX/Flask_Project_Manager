@@ -137,16 +137,12 @@ def view_project(id):
         if request.method == 'POST' and current_user.is_anonymous:
             return handle_unauth()
         comment_ans = add_comment(project, form)
-        print('Went put')
         if comment_ans == 'OK':
             sesion = db_session.create_session()
             com = sesion.query(Comment).filter(
                 Comment.id == sesion.query(func.max(Comment.id))).first()
-            print(com.__dict__)
             sesion.close()
             project.comments.append(com)
-            print('Comment ok')
-            print(com.text)
             form.text.data = ''
         info = project.__dict__
         comments_prev_list = get_project_comments(id)

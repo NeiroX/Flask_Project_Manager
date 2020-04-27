@@ -30,7 +30,7 @@ class User(SqlAlchemyBase, UserMixin):
         else:
             for attr in ['name', 'surname', 'username', 'email', 'country', 'age']:
                 json_ls[attr] = getattr(self, attr)
-        print('owner to json', json_ls)
+        print('user to json', json_ls)
         return json_ls
 
     def set_password(self, password):
@@ -57,6 +57,7 @@ class Projects(SqlAlchemyBase):
     num_rates = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     avg_rate = sqlalchemy.Column(sqlalchemy.Float, default=0)
     views = sqlalchemy.Column(sqlalchemy.Integer, default=0)
+    points = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     owner_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
     owner = orm.relationship('User', foreign_keys='Projects.owner_id', lazy='subquery')  # type: User
     collaborators = orm.relation('User', secondary='association_collabs', backref='projects')
@@ -97,6 +98,17 @@ class Comment(SqlAlchemyBase):
     create_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now())
     project_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('projects.id'))
     likes = sqlalchemy.Column(sqlalchemy.Integer, default=0)
+
+    def tojson(self, *args):
+        json_ls = {}
+        if len(args) > 0:
+            for attr in args:
+                json_ls[attr] = getattr(self, attr)
+        else:
+            for attr in ['id', 'text', 'creator_id', 'create_date', 'project_id', 'likes']:
+                json_ls[attr] = getattr(self, attr)
+        print('comment to json', json_ls)
+        return json_ls
 
 
 class Tags(SqlAlchemyBase):

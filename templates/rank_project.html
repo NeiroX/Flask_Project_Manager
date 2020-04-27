@@ -4,32 +4,37 @@
 <div class="jumbotron p-4 p-md-5 rounded" style="background-color: #2A2A2A">
     <div class="col-md-15 mb-4">
         <div class="view overlay z-depth-1-half">
-            <img class="circle-image" align="right" width="200" id="project_image" height="200" src={{project['image_path']}}>
+            <img class="circle-image" align="right" width="200" id="project_image" height="200"
+                 src={{project['image_path']}}>
         </div>
     </div>
     <div class="col-md-16 mb-4">
         <h1 class="name-text display-4" id="project_name">{{project['name']}}</h1>
-        <a href="/user/{{project['owner_username']}}" id="owner_username"><b>Author: {{project['owner_username']}}</b></a><br>
-        <p id="create_date" class="created-date-text">Date of creation: {{project['create_date']}}</p>
-        <p class="short-description-text lead " id="short_description">{{project['short_description']}}</p>
+        <a href="/user/{{project['owner_username']}}" id="owner_username"><b>Author:
+            {{project['owner_username']}}</b></a><br>
+        <p id="create_date" class="created-date-text">Date of creation:
+            {{project['create_date']}}</p>
+        <p class="short-description-text lead " id="short_description">
+            {{project['short_description']}}</p>
         <hr class="my-4" style="background-color: #d6d6d6;">
         <p id="full_description" class="full-description-text">{{project['full_description']}}</p>
     </div>
     <hr class="my-4">
     <br>
-</div>
-<div class="btn-toolbar" role="toolbar">
-    {% for i in range(1,6) %}
+    <div class="btn-toolbar" role="toolbar">
+        {% for i in range(1,6) %}
         <div class="btn-group" role="group">
             <button type="button" id="rank_{{i}}" class="btn btn-success rate-button" onclick="">
-                <svg class="bi bi-award-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <svg class="bi bi-award-fill" width="1em" height="1em" viewBox="0 0 16 16"
+                     fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                     <path d="M8 0l1.669.864 1.858.282.842 1.68 1.337 1.32L13.4 6l.306 1.854-1.337 1.32-.842 1.68-1.858.282L8 12l-1.669-.864-1.858-.282-.842-1.68-1.337-1.32L2.6 6l-.306-1.854 1.337-1.32.842-1.68L6.331.864 8 0z"/>
                     <path d="M4 11.794V16l4-1 4 1v-4.206l-2.018.306L8 13.126 6.018 12.1 4 11.794z"/>
                 </svg>
             </button>
         </div>
-    {% endfor %}
-    <button class="btn btn-success next-button" onclick="">Next</button>
+        {% endfor %}
+        <button class="btn btn-success next-button" onclick="">Next</button>
+    </div>
 </div>
 
 {% endblock %}

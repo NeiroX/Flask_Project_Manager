@@ -1,13 +1,34 @@
 from flask import Blueprint, render_template, request, redirect, url_for, abort, session, \
     make_response, jsonify
 from db_session import create_session, create_coon
-from models import ranked_table, Projects
-from flask_login import current_user
+from models import ranked_table, Projects, Comment, User
+from flask_login import current_user, login_required
 from sqlalchemy import insert, func
+from forms import CommentForm
 import schedule
 
 blueprint = Blueprint('ranking_projects', __name__, template_folder='templates')
 ADMIN = 'A'
+
+
+def add_comment(project_id, text, creator_id):
+    if request.method == 'POST':
+        if current_user.is_anonymous:
+            return redirect(f'/project/show/{project_id}')
+        if text:
+            sesion = create_session()
+            project = sesion.query(Projects).filter_by(id=project_id).first()
+            comment = Comment(text=text.strip(),
+                              creator_id=creator_id,
+                              project_id=project_id)
+            sesion.add(comment)
+            sesion.commit()
+            sesion.close()
+            sesion = create_session()
+            com = sesion.query(Comment).filter(
+                Comment.id == sesion.query(func.max(Comment.id))).first()
+            sesion.close()
+            project.comments.append(com)
 
 
 # Доблавние в уже оценные проекты и добавление информации в бд
@@ -96,6 +117,7 @@ def rank_projects():
                             max_age=60)  # Message is not displayed
         return response
     first_project, new_last_id = project
-    response = make_response(render_template('rank_project.html', project=first_project.tojson()))
+    response = make_response(
+        render_template('rank_project.html', project=first_project.tojson()))
     response.set_cookie('last_project_id', str(new_last_id))
     return response
