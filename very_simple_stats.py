@@ -4,6 +4,14 @@ import matplotlib.pyplot as plt
 import datetime
 import io
 import base64
+import db_session
+from models import likes_in_day_table
+
+
+def get_dates():
+    sesion = db_session.create_session()
+    dates = [date for date in sesion.query(likes_in_day_table.c.date).all()]
+    return dates
 
 
 def convert_pillow_to_base64(figure):
@@ -18,6 +26,8 @@ def convert_pillow_to_base64(figure):
 
 
 def plot_avg_likes(avg_likes, dates):
+    da = get_dates()
+    print('dates', da)
     fig = plt.figure()
     plot = fig.add_subplot(111)
     x = list(map(lambda date: date.strftime('%d.%m.%Y'), dates))

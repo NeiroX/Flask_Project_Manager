@@ -81,10 +81,19 @@ def send_img():
     response.set_cookie('error_message', '1', max_age=0)
     return response
     # return send_file(output, mimetype='image/png', as_attachment=False)
+
+
 @blueprint.route('/<string:username>/projects/stats/<int:project_id>')
-def stats_for_project(username,project_id):
-    if current_user.username!=username:
-        abort(405)
+def stats_for_project(username, project_id):
+    if current_user.username != username:
+        abort(401)
+    else:
+        img = plot_avg_likes([1, 2, 3],
+                             [datetime.datetime(2020, 3, 10),
+                              datetime.datetime(2020, 3, 29),
+                              datetime.datetime(2020, 4, 3)])
+        return render_template('project_simple_stats.html', stats_imgs=[{'base_64': img, 'title': 'Avg'}])
+
 
 @blueprint.route('/<string:username>/projects')
 def user_projects(username):
