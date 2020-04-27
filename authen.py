@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, make_response, url_for
 from forms import RegisterUserForm, LoginForm
-from flask_login import login_user, current_user, logout_user
+from flask_login import login_user, logout_user
 from models import User
 import db_session
 import datetime
@@ -53,7 +53,6 @@ def register():
                     'email': 'email@email.com'}
     if request.method == 'POST' and form.validate_on_submit():
         ans = check_new_user(form)
-        print(ans)
         if ans != 'OK':
             attr = getattr(form, ans[0])
             attr.errors.append(ans[1])
@@ -80,7 +79,6 @@ def register():
 
 @blueprint.route('/login', methods=['GET', 'POST'])
 def login():
-    print('login', request.args.get('next'), request.args.get('login_message'))
     next = request.args.get('next', url_for('base'))
     messg = request.args.get('login_message', '')
     form = LoginForm()

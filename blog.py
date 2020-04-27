@@ -14,7 +14,7 @@ from werkzeug.utils import secure_filename
 import requests
 import os
 import subprocess
-from useful_functions import get_popular_projects,get_recommended_projects
+from useful_functions import get_popular_projects, get_recommended_projects,delete_project_image
 from flask_login import current_user
 from useful_functions import get_project, resize_image
 from analyze_description import analyze_description
@@ -56,12 +56,6 @@ def get_project_comments(project_id):
     return comments
 
 
-def delete_project_image(img_name):
-    if img_name.split()[-1] != 'no_project_image.jpg':
-        try:
-            os.remove(img_name)
-        except Exception as e:
-            print(e)
 
 
 @blueprint.route('/register/check', methods=['GET', 'POST'])

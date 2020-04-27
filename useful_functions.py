@@ -10,18 +10,12 @@ import matplotlib.pyplot as plt
 import numpy
 
 
-def plot_avg_likes(likes, dates):
-    fig = plt.figure()
-    plot = fig.add_subplot(111)
-    x = dates
-    y = likes
-    plot.plot(x, y)
-    fig.canvas.draw()
-    w, h = fig.canvas.get_width_height()
-    numpy_img_arr = numpy.frombuffer(fig.canvas.tostring_rgb(), dtype=numpy.uint8).reshape(h, w, 3)
-    img = Image.fromarray(numpy_img_arr)
-    print(img.size)
-    img.save('from_numpy.png')
+def delete_project_image(img_name):
+    if img_name.split()[-1] != 'no_project_image.jpg':
+        try:
+            os.remove(img_name)
+        except Exception as e:
+            print(e)
 
 
 def get_popular_projects(num=4):

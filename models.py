@@ -56,7 +56,6 @@ class Projects(SqlAlchemyBase):
     rates_1 = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     num_rates = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     avg_rate = sqlalchemy.Column(sqlalchemy.Float, default=0)
-    points = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     views = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     owner_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
     owner = orm.relationship('User', foreign_keys='Projects.owner_id', lazy='subquery')  # type: User

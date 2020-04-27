@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+{% block content%}
+    <div>
+        {% for img_j in stats_imgs %}
+            <h2>{{img_j['title']}}</h2>
+            <hr>
+            <img src="data:image/png;base64,{{img_j['base_64']}}">
+        {% endfor %}
+    </div>
+{% endblock %}

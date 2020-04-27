@@ -1,15 +1,17 @@
 from flask import Blueprint, render_template, request, redirect, url_for, abort, Response, \
     jsonify, send_file, make_response
 from flask import Blueprint, render_template
-from models import Projects, User
+from models import Projects, User, Comment
+from forms import EditProjectForm, EditUserForm
 import db_session
 from flask_login import current_user, login_required
 from blog import delete_project
+from main import handle_unauth
 from very_simple_stats import plot_avg_likes
 import datetime
 import io
 import base64
-from useful_functions import get_recommended_projects, get_popular_projects
+from useful_functions import get_recommended_projects, get_popular_projects, delete_project_image
 
 blueprint = Blueprint('user', __name__,
                       template_folder='templates')
@@ -65,12 +67,8 @@ def user_info(username):
 
 @blueprint.route('/send-img', methods=['GET', 'POST'])
 def send_img():
-    img = plot_avg_likes([1, 2, 3], [datetime.datetime(2020, 3, 1), datetime.datetime(2020, 3, 20),
-                                     datetime.datetime(2020, 3, 28)])
-    output = io.BytesIO()
-    img.save(output, format='PNG')
-    output.seek(0, 0)
-    img_ase64 = base64.b64encode(output.getvalue()).decode('utf-8')
+    img_base64 = plot_avg_likes([1, 2, 3], [datetime.datetime(2020, 3, 1), datetime.datetime(2020, 3, 20),
+                                            datetime.datetime(2020, 3, 28)])
     popular_projects = get_popular_projects()
     recommended_projects = get_recommended_projects()
     message = request.cookies.get('error_message')
@@ -79,11 +77,14 @@ def send_img():
                         recommended_projects=recommended_projects,
                         message=message,
                         login=current_user.is_authenticated,
-                        bimg=img_ase64))
+                        bimg=img_base64))
     response.set_cookie('error_message', '1', max_age=0)
     return response
     # return send_file(output, mimetype='image/png', as_attachment=False)
-
+@blueprint.route('/<string:username>/projects/stats/<int:project_id>')
+def stats_for_project(username,project_id):
+    if current_user.username!=username:
+        abort(405)
 
 @blueprint.route('/<string:username>/projects')
 def user_projects(username):
@@ -96,7 +97,7 @@ def user_projects(username):
         abort(404)
 
 
-@blueprint.route('/statistic/<string:username>')
+@blueprint.route('/<string:username>/statistic')
 def user_statistics(username):
     user_obj = get_user(username)
     if user_obj:
@@ -117,7 +118,7 @@ def user_statistics(username):
         abort(404)
 
 
-@blueprint.route('/delete/<string:username>')
+@blueprint.route('/<string:username>/delete')
 @login_required
 def delete_user(username):
     user_obj = get_user(username)
@@ -144,7 +145,7 @@ def delete_user(username):
         abort(404)
 
 
-@blueprint.route('/edit/<string:username>', methods=['GET', 'POST'])
+@blueprint.route('/<string:username>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_user(username):
     form = EditUserForm()
