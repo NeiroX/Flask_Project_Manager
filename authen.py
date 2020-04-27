@@ -87,6 +87,8 @@ def register():
 # Вод в аккаунт и работа с куки
 @blueprint.route('/login', methods=['GET', 'POST'])
 def login():
+    '''Форма логина. Если пользователя перекинуло из-за того что он не авторизован -
+    буде  '''
     next = request.args.get('next', url_for('base'))
     messg = request.args.get('login_message', '')
     form = LoginForm()
