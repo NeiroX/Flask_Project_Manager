@@ -97,7 +97,6 @@ from flask import Flask, render_template, request, make_response, abort, url_for
     @app.route('/')
     def home_view():
       return "<h1>Hello world!</h1>"
-    app.run()
 #     try:
 #         app.run(port=8080, host='127.0.0.1')
 #     except:
