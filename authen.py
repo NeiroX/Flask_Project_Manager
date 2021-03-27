@@ -50,14 +50,6 @@ def register():
     countries_list = [(country, country) for country in
                       [line.strip() for line in open('data/countries.txt').readlines()]]
     form.country.choices = countries_list
-    pre_register = {'name': 'ME',
-                    'surname': 'YOU',
-                    'username': 'username',
-                    'password': 'hello',
-                    'password_again': 'hello',
-                    'age': 22,
-                    'country': 'Italy',
-                    'email': 'email@email.com'}
     if request.method == 'POST' and form.validate_on_submit():
         ans = check_new_user(form)
         if ans != 'OK':
@@ -78,9 +70,6 @@ def register():
         sesion.commit()
         sesion.close()
         return redirect(url_for('authen.login'))
-    for k in form.__dict__:
-        if k in pre_register.keys():
-            getattr(form, k).data = pre_register[k]
     return render_template('register.html', form=form, title='Register')
 
 

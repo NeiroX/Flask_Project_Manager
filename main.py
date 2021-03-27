@@ -92,4 +92,7 @@ if __name__ == '__main__':
     app.register_blueprint(blog.blueprint, url_prefix='/project')
     app.register_blueprint(user_profile.blueprint, url_prefix='/user')
     app.register_blueprint(ranking_projects.blueprint, url_prefix='/rank-projects')
-    app.run(port=8080, host='127.0.0.1')
+    try:
+        app.run(port=8080, host='127.0.0.1')
+    except:
+        logging.log('local running canceled')
