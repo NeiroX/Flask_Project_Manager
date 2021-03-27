@@ -1,4 +1,4 @@
-from flask import Flask
+# from flask import Flask
 
 # from flask import render_template, request, make_response, abort, url_for, redirect, jsonify
 # from forms import RegisterUserForm
@@ -19,7 +19,7 @@ from flask import Flask
 # import logging
 # from time import sleep
 
-app = Flask(__name__)
+# app = Flask(__name__)
 
 
 # app.config['SECRET_KEY'] = 'flask_project_key'
@@ -84,12 +84,12 @@ app = Flask(__name__)
 #         schedule.run_pending()
 #         sleep(1)
 #     logging.debug('should exit now')
-@app.route('/')
-def home_view():
-    return "<h1>Hello world!</h1>"
+# @app.route('/')
+# def home_view():
+#     return "<h1>Hello world!</h1>"
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
     #     db_session.global_init("db.sqlite")
 
     #     th = threading.Thread(target=schedule_thread)
@@ -99,4 +99,4 @@ if __name__ == '__main__':
     #     app.register_blueprint(blog.blueprint, url_prefix='/project')
     #     app.register_blueprint(user_profile.blueprint, url_prefix='/user')
     #     app.register_blueprint(ranking_projects.blueprint, url_prefix='/rank-projects')
-    app.run(threaded=True, port=5000)
+    # app.run(threaded=True, port=5000)
