@@ -80,9 +80,11 @@ from flask import Flask, render_template, request, make_response, abort, url_for
 #         schedule.run_pending()
 #         sleep(1)
 #     logging.debug('should exit now')
+@app.route('/')
+def home_view():
+  return "<h1>Hello world!</h1>"
 
-
-# if __name__ == '__main__':
+ if __name__ == '__main__':
 #     db_session.global_init("db.sqlite")
 
 #     th = threading.Thread(target=schedule_thread)
@@ -92,11 +94,9 @@ from flask import Flask, render_template, request, make_response, abort, url_for
 #     app.register_blueprint(blog.blueprint, url_prefix='/project')
 #     app.register_blueprint(user_profile.blueprint, url_prefix='/user')
 #     app.register_blueprint(ranking_projects.blueprint, url_prefix='/rank-projects')
+      app.run(threaded=True, port=5000)
     
-    
-    @app.route('/')
-    def home_view():
-      return "<h1>Hello world!</h1>"
+
 #     try:
 #         app.run(port=8080, host='127.0.0.1')
 #     except:
