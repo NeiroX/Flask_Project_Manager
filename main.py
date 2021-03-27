@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, make_response, abort, url_for, redirect, jsonify
+
 # from forms import RegisterUserForm
 # from flask_login import LoginManager, current_user
 # from models import User, Projects
@@ -17,7 +18,9 @@ from flask import Flask, render_template, request, make_response, abort, url_for
 # import logging
 # from time import sleep
 
-# app = Flask(__name__)
+app = Flask(__name__)
+
+
 # app.config['SECRET_KEY'] = 'flask_project_key'
 # app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'static/imgs')
 # app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=365 * 10)
@@ -82,22 +85,17 @@ from flask import Flask, render_template, request, make_response, abort, url_for
 #     logging.debug('should exit now')
 @app.route('/')
 def home_view():
-  return "<h1>Hello world!</h1>"
+    return "<h1>Hello world!</h1>"
 
- if __name__ == '__main__':
-#     db_session.global_init("db.sqlite")
 
-#     th = threading.Thread(target=schedule_thread)
-#     th.start()
-#     app.register_blueprint(authen.blueprint)
-#     app.register_blueprint(errors.blueprint)
-#     app.register_blueprint(blog.blueprint, url_prefix='/project')
-#     app.register_blueprint(user_profile.blueprint, url_prefix='/user')
-#     app.register_blueprint(ranking_projects.blueprint, url_prefix='/rank-projects')
-      app.run(threaded=True, port=5000)
-    
+if __name__ == '__main__':
+    #     db_session.global_init("db.sqlite")
 
-#     try:
-#         app.run(port=8080, host='127.0.0.1')
-#     except:
-#         logging.log('local running canceled')
+    #     th = threading.Thread(target=schedule_thread)
+    #     th.start()
+    #     app.register_blueprint(authen.blueprint)
+    #     app.register_blueprint(errors.blueprint)
+    #     app.register_blueprint(blog.blueprint, url_prefix='/project')
+    #     app.register_blueprint(user_profile.blueprint, url_prefix='/user')
+    #     app.register_blueprint(ranking_projects.blueprint, url_prefix='/rank-projects')
+    app.run(threaded=True, port=5000)
