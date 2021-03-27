@@ -8,7 +8,7 @@ from forms import RegisterProjectForm, EditProjectForm
 from models import Projects, User, association_comments
 import db_session
 import datetime
-from main import app, handle_unauth
+from app import app, handle_unauth
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 import requests

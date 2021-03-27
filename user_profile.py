@@ -6,7 +6,7 @@ from forms import EditProjectForm, EditUserForm
 import db_session
 from flask_login import current_user, login_required
 from blog import delete_project
-from main import handle_unauth
+from app import handle_unauth
 from very_simple_stats import plot_avg_likes, plot_date_likes, plot_day_likes
 import datetime
 import io
