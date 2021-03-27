@@ -1,29 +1,28 @@
 from flask import Flask, render_template, request, make_response, abort, url_for, redirect, jsonify
-
-# from forms import RegisterUserForm
-# from flask_login import LoginManager, current_user
-# from models import User, Projects
-# from werkzeug.utils import secure_filename
-# import os
-# import authen
-# import errors
-# import user_profile
-# import blog
-# import db_session
-# import ranking_projects
-# from useful_functions import get_popular_projects, resize_image, get_recommended_projects, write_new_likes
-# import datetime
-# import schedule
-# import threading
-# import logging
-# from time import sleep
+from forms import RegisterUserForm
+from flask_login import LoginManager, current_user
+from models import User, Projects
+from werkzeug.utils import secure_filename
+import os
+import authen
+import errors
+import user_profile
+import blog
+import db_session
+import ranking_projects
+from useful_functions import get_popular_projects, resize_image, get_recommended_projects, write_new_likes
+import datetime
+import schedule
+import threading
+import logging
+from time import sleep
 
 app = Flask(__name__)
 
 
-# app.config['SECRET_KEY'] = 'flask_project_key'
-# app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'static/imgs')
-# app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=365 * 10)
+app.config['SECRET_KEY'] = 'flask_project_key'
+app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'static/imgs')
+app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=365 * 10)
 # login_manager = LoginManager()
 # login_manager.init_app(app)
 
