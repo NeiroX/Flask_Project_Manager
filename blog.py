@@ -239,11 +239,12 @@ def edit_blog(id):
                 project.image_path = url_for('static',
                                              filename=f'imgs/project_imgs/{current_user.id}_{res + 1}.jpg')
             else:
-                project.image_path = url_for('static',
-                                             filename='imgs/project_imgs/no_project_image.jpg')
+                project.image_path = project.image_path
+                # project.image_path = url_for('static',
+                #                              filename='imgs/project_imgs/no_project_image.jpg')
 
             sesion.commit()
-            print('commited')
+            print('commited editions')
             # subprocess.call(f'python3 analyze_description.py {last_id} --editing', shell=True)
             return redirect(f'/project/show/{id}')
         else:

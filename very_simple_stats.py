@@ -14,8 +14,10 @@ matplotlib.use('TkAgg')
 def get_dates(pr_id):
     '''Получить все даты из таблицы likes_in_day_table'''
     sesion = db_session.create_session()
-    dates = [date[0] for date in sesion.query(likes_in_day_table.c.date).filter(likes_in_day_table.c.project_id==pr_id)]
+    dates = [date[0] for date in sesion.query(likes_in_day_table.c.date).filter(
+        likes_in_day_table.c.project_id == pr_id)]
     return set(dates)
+
 
 def get_project_likes(pr_id):
     '''Получить все оценки из таблицы likes_in_day_table'''
@@ -36,7 +38,8 @@ def convert_pillow_to_base64(figure):
     '''Преобразование matplotlib фигуры в Pillow Image,
      сохранение ее в формате png и перевод с байтов в base_64(для html)'''
     w, h = figure.canvas.get_width_height()
-    numpy_img_arr = numpy.frombuffer(figure.canvas.tostring_rgb(), dtype=numpy.uint8).reshape(h, w, 3)
+    numpy_img_arr = numpy.frombuffer(figure.canvas.tostring_rgb(), dtype=numpy.uint8).reshape(h, w,
+                                                                                              3)
     img = Image.fromarray(numpy_img_arr)
     output = io.BytesIO()
     img.save(output, format='PNG')
@@ -98,12 +101,13 @@ def plot_day_likes(pr_id):
     for i, date in enumerate(get_dates(pr_id)):
         fig = plt.figure()
         bad_dic = dics[i]
-        dic = {1: bad_dic['rates_1'], 2: bad_dic['rates_2'], 3: bad_dic['rates_3'], 4: bad_dic['rates_4'],
+        dic = {1: bad_dic['rates_1'], 2: bad_dic['rates_2'], 3: bad_dic['rates_3'],
+               4: bad_dic['rates_4'],
                5: bad_dic['rates_5']}
         colors = {1: 'red', 2: 'coral', 3: 'gold', 4: 'yellowgreen', 5: 'darkgreen'}
         plot = fig.add_subplot(111)
         names, values = zip(*dic.items())
-        y_pos = numpy.arange(1,len(names)+1)
+        y_pos = numpy.arange(1, len(names) + 1)
         plot.bar(y_pos, values, color=[colors[key] for key in dic])
         plot.set_xticks(y_pos, names)
         plot.set_title(f'Likes on {date.strftime("%d.%m.%Y")}')

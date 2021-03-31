@@ -38,7 +38,8 @@
         <a class="profile-nav-text nav-link active" href="/user/{{user.username}}">Info</a>
     </li>
     <li class="nav-item">
-        <a class="profile-nav-text nav-link active" href="/user/{{user.username}}/projects">Projects</a>
+        <a class="profile-nav-text nav-link active"
+           href="/user/{{user.username}}/projects">Projects</a>
     </li>
     <li class="nav-item">
         <a class="profile-nav-text nav-link"
@@ -75,12 +76,13 @@
                 <div class="name-card-text name-text card-title">{{ prjct.name }}</div>
                 <p class="short-description-card-text short-description-text card-text">{{
                     prjct.short_description }}</p>
-                <a href="http://127.0.0.1:8080/project/show/{{prjct.id}}" class="btn btn-warning">Show
+                <a href="/project/show/{{ prjct.id }}" class="btn btn-warning">Show
                     project</a>
-                <a href="http://127.0.0.1:8080/user/{{user.username}}/projects/stats/{{prjct.id}}" class="btn btn-primary">Stats</a>
+                <a href="/user/{{prjct.owner.username}}/projects/stats/{{prjct.id}}"
+                   class="btn btn-primary">Stats</a>
             </div>
             <div class="card-footer">
-                <a href="http://127.0.0.1:8080/user/{{prjct.owner.username}}">{{ prjct.owner.username }}</a>
+                <a href="/user/{{ prjct.owner.username }}">{{ prjct.owner.username }}</a>
                 <small class="text-muted">Created: {{ prjct.create_date.strftime("%Y-%m-%d") }}
                 </small>
                 <br>

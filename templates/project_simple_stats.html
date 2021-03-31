@@ -2,9 +2,11 @@
 {% block content%}
 <div>
     {% for img_j in stats_imgs %}
+    <br>
     <h2 class="name-text">{{img_j['title']}}</h2>
     <hr class="line">
     <img src="data:image/png;base64,{{img_j['base_64']}}">
+    <br>
     {% endfor %}
 </div>
 {% endblock %}

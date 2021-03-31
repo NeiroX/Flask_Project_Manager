@@ -20,6 +20,26 @@ def delete_project_image(img_name):
             print(e)
 
 
+def shorten_descriptions(projects):
+    print('used shorten_description')
+    for project in projects:
+        upper_text_length_bound = 64
+        current_length = len(project.short_description)
+        if current_length <= upper_text_length_bound:
+            continue
+        else:
+            new_description = ''
+            for elem in project.short_description.split(' '):
+                if len((new_description + ' ' + elem).strip()) <= upper_text_length_bound - 3:
+                    new_description += ' ' + elem
+                else:
+                    if new_description:
+                        project.short_description = (new_description + '...').strip()
+                    else:
+                        project.short_description = project.new_description[:61] + '...'
+    return projects
+
+
 def add_comment_to_project(pr_id):
     sesion = db_session.create_session()
     project = sesion.query(Projects).get(pr_id)

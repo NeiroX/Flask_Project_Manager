@@ -13,7 +13,7 @@ import blog
 import db_session
 import ranking_projects
 from useful_functions import get_popular_projects, resize_image, get_recommended_projects, \
-    write_new_likes
+    write_new_likes, shorten_descriptions
 import datetime
 import schedule
 import threading
@@ -42,8 +42,8 @@ def load_user(user_id):
 # Главная страница
 @app.route('/')
 def base():
-    popular_projects = get_popular_projects()
-    recommended_projects = get_recommended_projects()
+    popular_projects = shorten_descriptions(get_popular_projects())
+    recommended_projects = shorten_descriptions(get_recommended_projects())
     message = request.cookies.get('error_message')
     response = make_response(
         render_template('first_screen.html', title='Home', popular_projects=popular_projects,

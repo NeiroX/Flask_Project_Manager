@@ -101,7 +101,6 @@ def login():
                 User.username == form.username_email.data)).first()
         login_user(user, remember=form.remember_me.data)
         return redirect(next)
-    form.username_email.data = 'username'
     resp = make_response(
         render_template('login.html', message_login=messg, form=form, title='Login'))
     resp.set_cookie('login_tries', str(login_tries + 1), max_age=60 * 2)

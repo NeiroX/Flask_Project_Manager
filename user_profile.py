@@ -11,7 +11,8 @@ from very_simple_stats import plot_avg_likes, plot_date_likes, plot_day_likes
 import datetime
 import io
 import base64
-from useful_functions import get_recommended_projects, get_popular_projects, delete_project_image
+from useful_functions import get_recommended_projects, get_popular_projects, delete_project_image, \
+    shorten_descriptions
 
 blueprint = Blueprint('user', __name__,
                       template_folder='templates')
@@ -90,7 +91,8 @@ def user_projects(username):
     if user_obj:
         projects = get_projects(user_obj.id)
         return render_template('user_profile.html', title=user_obj.username, user=user_obj,
-                               viewer=current_user, nav_status='projects', projects=projects)
+                               viewer=current_user, nav_status='projects',
+                               projects=shorten_descriptions(projects))
     else:
         abort(404)
 
@@ -108,7 +110,8 @@ def user_statistics(username):
                 statistic['total_rates'] += project.num_rates
                 statistic['average_rating'] += project.avg_rate
                 statistic['number_of_projects'] += 1
-            statistic['average_rating'] /= statistic['total_rates']
+            if statistic['total_rates'] != 0:
+                statistic['average_rating'] /= statistic['total_rates']
         statistic['total_comments'] = len(comments) if comments else 0
         return render_template('user_profile.html', title=user_obj.username, user=user_obj,
                                viewer=current_user, nav_status='statistic', stats=statistic)

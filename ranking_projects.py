@@ -86,12 +86,14 @@ def choose_project():
 @blueprint.route('/', methods=['GET', 'POST'])
 def rank_projects():
     project = choose_project()  # type: Projects
+    print(project)
     if not project:
         response = make_response(redirect(url_for('base')))
         response.set_cookie('error_message',
                             '<strong>You have already ranked all the projects</strong>', max_age=60)
         return response
     first_project, new_last_id = project
-    response = make_response(render_template('rank_project.html', project=first_project.tojson()))
+    response = make_response(render_template('rank_project.html', title='Rate',
+                                             project=first_project.tojson()))
     response.set_cookie('last_project_id', str(new_last_id))
     return response
