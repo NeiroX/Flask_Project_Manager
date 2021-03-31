@@ -81,7 +81,7 @@ def stats_for_project(username, project_id):
                       {'base_64': plot_date_likes(project_id), 'title': 'Likes at all times'}]
         for img in plot_day_likes(project_id):
             stats_imgs.append({'base_64': img[0], 'title': str(img[1])})
-        return render_template('project_simple_stats.html', stats_imgs=stats_imgs)
+        return render_template('project_simple_stats.html', title='Project Stats', stats_imgs=stats_imgs)
 
 
 @blueprint.route('/<string:username>/projects')
